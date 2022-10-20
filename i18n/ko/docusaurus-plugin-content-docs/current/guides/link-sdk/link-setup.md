@@ -10,7 +10,7 @@ keywords: [imx-wallets]
 Check out our **[Link reference tool](https://tools.immutable.com/link-reference/)** to understand how `Link` methods work without having to write any code.
 :::
 
-A user's web3 wallet (e.g. Metamask) is used to create, connect, and sign transactions on Immutable X. Before a user can do this, they need to be registered on Immutable and signed into their wallet. Both these steps can be done with a single call to `Link.setup`. If a user is already registered, this function can also be called to sign them in.
+A user's web3 wallet (e.g. Metamask) is used to create, connect, and sign transactions on ImmutableX. Before a user can do this, they need to be registered on Immutable and signed into their wallet. Both these steps can be done with a single call to `Link.setup`. If a user is already registered, this function can also be called to sign them in.
 
 ## Supported wallets
 
@@ -18,6 +18,7 @@ Wallets supported in Link:
 - Metamask
 - Magic Link
 - Gamestop Wallet
+- WalletConnect
 
 ## Parameters
 
@@ -32,6 +33,7 @@ enum ProviderPreference {
     GAMESTOP = 'gamestop',
     METAMASK = 'metamask',
     MAGIC_LINK = 'magic_link',
+    WALLET_CONNECT = 'wallet_connect',
     NONE = 'none',
 }
 
@@ -41,6 +43,10 @@ enum ProviderPreference {
 **Gamestop Wallet** is available in SDK v1.22.0.
 
 **Gamestop Wallet** should be at least version 0.6.0.
+:::
+
+:::info WalletConnect
+**WalletConnect** is available in SDK v1.[FeatPlaceholder].0.
 :::
 
 ## Usage
@@ -56,7 +62,7 @@ const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPrefe
 const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "magic_link" })
 ```
 
-`Link.setup` returns the user's signed-in address and Stark public key if the setup or sign in was completed successfully.
+`Link.setup` returns the user's signed-in address and STARK public key if the setup or sign in was completed successfully.
 
 ```typescript
 const SetupResultsCodec = t.intersection([
@@ -114,7 +120,6 @@ const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPrefe
 ```
 ![magic_link](/img/link-setup/magic_link.png 'magic_link')
 
-
 ### Gamestop Wallet
 ```typescript
 // Specifying Magic as provider:
@@ -126,6 +131,48 @@ Gamestop Wallet is available only on mainnet
 :::
 
 ![Gamestop Wallet](/img/link-setup/gamestop.png 'Gamestop Wallet')
+
+### WalletConnect
+```typescript
+// Specifying WalletConnect as provider:
+const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "wallet_connect" })
+```
+
+<figure style={{display: 'inline-block', 'margin-left': 0}}>
+  <img 
+    src="/img/link-setup/wallet_connect_desktop.png"
+    title="WalletConnect desktop"
+    alt="wallet_connect_desktop" 
+    style={{'margin-bottom': '-4px'}} 
+  />
+  <figcaption style={{'text-align': 'center'}}>
+    <i>Desktop browsers</i>
+  </figcaption>
+</figure><br />
+
+<figure style={{display: 'inline-block', 'margin-left': 0}}>
+  <img 
+    src="/img/link-setup/wallet_connect_mobile_ios.png"
+    title="WalletConnect mobile iOS"
+    alt="wallet_connect_mobile_ios" 
+    style={{'margin-bottom': '-4px'}} 
+  />
+  <figcaption style={{'text-align': 'center'}}>
+    <i>Mobile browsers - iOS</i>
+  </figcaption>
+</figure><br />
+
+<figure style={{display: 'inline-block', 'margin-left': 0}}>
+  <img 
+    src="/img/link-setup/wallet_connect_mobile_android.png"
+    title="WalletConnect mobile Android"
+    alt="wallet_connect_mobile_android" 
+    style={{'margin-bottom': '-4px'}} 
+  />
+  <figcaption style={{'text-align': 'center'}}>
+    <i>Mobile browsers - Android</i>
+  </figcaption>
+</figure>
 
 ## Multiple browser wallets detected
 

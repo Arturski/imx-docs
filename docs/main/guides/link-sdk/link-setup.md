@@ -18,6 +18,7 @@ Wallets supported in Link:
 - Metamask
 - Magic Link
 - Gamestop Wallet
+- WalletConnect
 
 ## Parameters
 
@@ -32,6 +33,7 @@ enum ProviderPreference {
     GAMESTOP = 'gamestop',
     METAMASK = 'metamask',
     MAGIC_LINK = 'magic_link',
+    WALLET_CONNECT = 'wallet_connect',
     NONE = 'none',
 }
 
@@ -41,6 +43,10 @@ enum ProviderPreference {
 **Gamestop Wallet** is available in SDK v1.22.0.
 
 **Gamestop Wallet** should be at least version 0.6.0.
+:::
+
+:::info WalletConnect
+**WalletConnect** is available in SDK v1.[FeatPlaceholder].0.
 :::
 
 ## Usage
@@ -114,7 +120,6 @@ const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPrefe
 ```
 ![magic_link](/img/link-setup/magic_link.png 'magic_link')
 
-
 ### Gamestop Wallet
 ```typescript
 // Specifying Magic as provider:
@@ -126,6 +131,48 @@ Gamestop Wallet is available only on mainnet
 :::
 
 ![Gamestop Wallet](/img/link-setup/gamestop.png 'Gamestop Wallet')
+
+### WalletConnect
+```typescript
+// Specifying WalletConnect as provider:
+const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "wallet_connect" })
+```
+
+<figure style={{display: 'inline-block', 'margin-left': 0}}>
+  <img 
+    src="/img/link-setup/wallet_connect_desktop.png"
+    title="WalletConnect desktop"
+    alt="wallet_connect_desktop" 
+    style={{'margin-bottom': '-4px'}} 
+  />
+  <figcaption style={{'text-align': 'center'}}>
+    <i>Desktop browsers</i>
+  </figcaption>
+</figure><br />
+
+<figure style={{display: 'inline-block', 'margin-left': 0}}>
+  <img 
+    src="/img/link-setup/wallet_connect_mobile_ios.png"
+    title="WalletConnect mobile iOS"
+    alt="wallet_connect_mobile_ios" 
+    style={{'margin-bottom': '-4px'}} 
+  />
+  <figcaption style={{'text-align': 'center'}}>
+    <i>Mobile browsers - iOS</i>
+  </figcaption>
+</figure><br />
+
+<figure style={{display: 'inline-block', 'margin-left': 0}}>
+  <img 
+    src="/img/link-setup/wallet_connect_mobile_android.png"
+    title="WalletConnect mobile Android"
+    alt="wallet_connect_mobile_android" 
+    style={{'margin-bottom': '-4px'}} 
+  />
+  <figcaption style={{'text-align': 'center'}}>
+    <i>Mobile browsers - Android</i>
+  </figcaption>
+</figure>
 
 ## Multiple browser wallets detected
 
