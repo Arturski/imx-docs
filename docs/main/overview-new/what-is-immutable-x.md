@@ -8,22 +8,38 @@ sidebar_position: 1
 
 # What is Immutable X?
 
-On this page:
-* [Why not build on layer 1?](#why-cant-we-just-build-on-layer-1)
+Immutable X is a platform that provides:
+1. [Layer 2 solutions](../overview-new/immutable-layer-2) on the most secure and decentralized layer 1 - [Ethereum](#why-ethereum)
+2. APIs and developer tools that make it easy to build on these layer 2s
+
+### On this page:
+* [What can you build on it?](#what-can-you-build-on-it)
+* [Why Ethereum?](#why-ethereum)
+* [Problems with building on layer 1](#problems-with-building-on-layer-1)
 * [Benefits of building on layer 2 vs. layer 1](#benefits-of-building-on-layer-2-vs-layer-1)
-* [What can you build on Immutable X?](#what-can-you-build-on-immutable-x)
 
-Immutable X provides APIs and developer tools to make it easy for developers to build the next generation of web3 games and applications on faster and cheaper layer ("layer 2") on top of Ethereum ("layer 1").
+### What can you build on it?
+Immutable X is aimed at enabling developers to build fast, scalable and secure applications for NFTs and blockchain games. 
 
-It does this whilst maintaining the same level of security and decentralization as Ethereum.
+**Examples:**
 
-### Why Ethereum?
+| Application | Functionality provided by Immutable X |
+| --- | --- |
+| Games offering sophisticated economies through true ownership of in-game assets | <ul><li>Free minting of game assets</li><li>Fast and cheap in-game transactions</li><li>Self-custodial wallets so that users truly own their in-game items</li><li>Global orderbook so in-game items can be exchanged on the open market</li></ul> |
+| Token and asset trading platforms | <ul><li>Fast, cheap and secure trades between users</li><li>Global orderbook enabling maximum liquidity</li></ul> |
+| Sophisticated blockchain applications like DAOs or DeFi, that facilitate user coordination through voting and staking | <ul><li>Fast and cheap blockchain transactions</li><li>Deployment of customized smart contracts to govern a variety of user behaviours on the StarkNet settlement layer</li></ul> |
+| Blockchain transaction analysis tools | <ul><li>Easily accessible data on past transactions, trades and other user behaviors via APIs</li></ul> |
+
+#### [Read more information about what you can build >](/docs/overview-new/what-can-you-build)
+
+
+## Why Ethereum?
 
 Immutable chose to build on Ethereum because it is the most decentralized, secure and widely-used blockchain, giving rise to the greatest network effects.
 
 It is a technology that enables smart contracts and decentralized applications to be built and run without any downtime, fraud, control or interference from a third party.
 
-## Why can't we just build on layer 1?
+## Problems with building on layer 1
 
 ### Too slow
 The way that layer 1 (Ethereum) works is that every transaction requires all nodes in the network to validate it. This is important for security and decentralization, but it means that each transaction can take some time to be confirmed.
@@ -49,11 +65,3 @@ Immutable X makes it easy for developers to build on its layer 2 solutions. The 
 
 #### [Read more about Immutable X's layer 2 solutions >](/docs/overview-new/immutable-layer-2)
 
-## What can you build on Immutable X?
-Immutable X aims to supercharge developers who are building the latest applications for NFTs and blockchain games. It is aimed at enabling developers to build:
-* Games
-* NFT marketplaces
-* User wallets
-* NFT and transaction analysis tools
-
-#### [Read more information about what you can build >](/docs/overview-new/what-can-you-build)

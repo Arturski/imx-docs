@@ -4,6 +4,8 @@ slug: "/launch-collection-new/overview"
 keywords: [imx-dx]
 ---
 
+# Launch a collection
+
 Launching a collection with Immutable X means having a [token smart contract](https://docs.openzeppelin.com/contracts/4.x/tokens) deployed where tokens can be freely transacted (ie. minted, traded, bought and sold) on Immutable X's layer 2.
 
 :::info Minting tokens on layer 2

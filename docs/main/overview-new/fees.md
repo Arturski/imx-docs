@@ -17,6 +17,10 @@ Fees are additional amounts that a user pays on top of a base price of an asset.
 Fees are paid by the asset purchaser and sent to the recipient accounts as part of the transaction - so as soon as a transaction is confirmed.
 
 ## Rules for setting maker and taker fees
+
+**Maker fees** can be set by the application that is enabling the user to [create an order](../guides-new/orders) (put an asset up for sale). **Taker fees** can be set by the application enabling the user to [create a trade](../guides-new/trades) (purchase an item for sale).
+
+The restrictions around setting maker and taker fees are:
 * You cannot set more than 3 recipients
 * You cannot set the same recipient more than once
 * The combined fee percentage can’t exceed 100%

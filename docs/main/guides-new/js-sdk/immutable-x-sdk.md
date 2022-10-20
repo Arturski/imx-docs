@@ -1,12 +1,12 @@
 ---
 id: "immutable-x-sdk"
-title: "Immutable X SDK"
+title: "ImmutableX JS SDK"
 slug: "/immutable-x-sdk"
 excerpt: "Install and configure the SDK"
 sidebar_position: 1
 keywords: [imx-games]
 ---
-The Immutable X SDK is a Javascript package created by Immutable to allow simple interfacing with Immutable X’s API. The primarily used packages are Link SDK and the Immutable X Client.
+The ImmutableX JS SDK is a Javascript package created by Immutable to allow simple interfacing with Immutable X’s API. The primarily used packages are Link SDK and the Immutable X Client.
 
 The Immutable X Client is used for most backend operations, and the [Link SDK](../link-sdk/index.md) is used for frontend, user-facing interactions.
 

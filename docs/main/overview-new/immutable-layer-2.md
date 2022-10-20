@@ -20,7 +20,7 @@ ZK rollups consist of two main components:
     * Stores the current state root of the rollup.
     * Verifies that the previous state root in the batch matches the current state root. If so, it switches the state root to the new state root.
 
-#### Steps:
+#### How it works:
 1. A collection of layer 2 transactions are sent to the batching mechanism which generates a cryptographic proof from the transactions, previous state root and the new state root.
 2. This proof is sent to the layer 1 smart contract to verify.
 3. The layer 1 smart contract checks that the proof's previous state root is the same as its current state root.
@@ -48,7 +48,7 @@ As such, the following examples illustrate the issues that can arise when users 
 | Alice lists an item for sale on StarkEx<br/><br/>Bob does not have ETH on StarkEx, only on StarkNet<br/><br/>Bob wants to buy Alice's asset | Bob needs to obtain ETH on StarkEx, or withdraw his StarkNet ETH to layer 1 and then deposit it on StarkEx, in order to purchase Alice's asset |
 | Alice has an NFT that she minted on StarkNet<br/><br/>She wants to gift this NFT to Bob<br/><br/>Bob does not have a user account on StarkNet, only StarkEx | Alice needs to withdraw the NFT to layer 1, deposit it into her corresponding StarkEx account and then transfer it from that account to Bob<br/><br/>_or_<br/><br/>Bob needs to create a StarkNet account which Alice can transfer the NFT to |
 
-### But.. Cross-rollup functionality is coming!
+### But.. cross-rollup functionality is coming!
 While Immutable wants to provide users with many different settlement layer options, it does not want to maintain an ecosystem of isolated rollups. From our blog post on [Cross-Rollup NFT Liquidity](https://immutablex.medium.com/immutable-starknet-cross-rollup-nft-liquidity-b32df88cda02):
 > Immutable will ensure that there is robust interoperability between the rollups our platform supports, through the construction of seamless and trustless asset bridges and the abstraction of these assets in our APIs. As these rollups share a settlement layer (L1 Ethereum), bridging is possible without compromising asset security.
 

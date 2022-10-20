@@ -1,18 +1,18 @@
 ---
 id: "wallet-sdk-ui-guide"
-title: "UI guide for implementing user wallet interactions"
+title: "User wallet interactions"
 slug: "/wallet-sdk-ui-guide"
 sidebar_position: 1
 keywords: [imx-wallets]
 ---
 
-# UI guide for implementing user wallet interactions
+# User wallet interactions
 
 This guide is aimed at providing clarity on the minimum requirements when implementing user wallet connections and interactions. 
 
 Previously, applications using the [Link SDK](/docs/sdk-api) did not have to worry about this because the Link SDK provided an opinionated UI that implemented our best practices. Now, when using the [Core SDK with the Wallet SDK](/docs/sdks#how-do-the-sdks-work-together), applications may need to implement their own design. Other than the must-haves outlined in this guide, the rest is up the application.
 
-## User interactions
+### Interactions:
 * [Connect wallet](#connect-wallet)
 * [Disconnect wallet](#disconnect-wallet)
 * [List asset](#list-asset)

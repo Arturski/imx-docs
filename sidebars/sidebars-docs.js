@@ -41,7 +41,7 @@ module.exports = {
           label: 'Basic guides',
           link: { type: 'doc', id: 'guides-new/basic-guides/overview/index' },
           items: [
-            'guides-new/basic-guides/get-started/index',
+            'guides-new/basic-guides/install-initialize/index',
             'guides-new/basic-guides/get-data/index',
             'guides-new/basic-guides/generate-signers/index',
             'guides-new/basic-guides/register-users/index',

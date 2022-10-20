@@ -1,13 +1,12 @@
 ---
-title: "Get started"
-slug: "/guides-new/get-started"
+title: "Install and initialize"
+slug: "/guides-new/install-initialize"
 keywords: [imx-dx]
 ---
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
 
-## Install and initialize
 **Required for:**
 * [Core SDK](#core-sdk)
 * [JS SDK (deprecating soon)](/docs/immutable-x-sdk#setting-up-the-sdk)

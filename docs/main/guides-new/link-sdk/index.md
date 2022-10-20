@@ -5,11 +5,15 @@ slug: "/sdk-api"
 keywords: [imx-wallets]
 ---
 
-:::note Link reference tool
+:::caution To be deprecated soon - do not start using!
+JS and Link SDKs will be deprecated soon. If you have not yet started building, **do not** build on these. If you have already started building with this, please make plans to switch over to the [Core SDK](/docs/sdks).
+:::
+
+:::tip Link reference tool
 Check out our **[Link reference tool](https://tools.immutable.com/link-reference/)** to understand how `Link` methods work without having to write any code.
 :::
 
-For context, read our [overview of the Immutable X SDK](../js-sdk/immutable-x-sdk.md).
+For context, read our [overview of the ImmutableX JS SDK](../js-sdk/immutable-x-sdk.md).
 
 ## Link usage
 

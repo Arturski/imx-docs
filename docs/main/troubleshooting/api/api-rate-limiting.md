@@ -1,8 +1,8 @@
 ---
 id: "api-rate-limiting"
-title: "Rate limiting"
+title: "API rate limiting"
 slug: "/api-rate-limiting"
-sidebar_position: 1
+sidebar_position: 9
 keywords: [imx-core]
 ---
 

@@ -13,7 +13,7 @@ keywords: [imx-wallets]
 To register the wallet, simply do `Connect Wallet` in the Immutable X Marketplace and follow through all the steps until the wallet is fully connected to Immutable X Marketplace
 :::
 
-:::note Link reference tool
+:::tip Link reference tool
 Check out our **[Link reference tool](https://tools.immutable.com/link-reference/)** to understand how `Link` methods work without having to write any code.
 :::
 

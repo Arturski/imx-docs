@@ -5,8 +5,15 @@ slug: "/guides-new/get-data"
 
 import Tabs from '@theme/Tabs';
 import TabItem from '@theme/TabItem';
-// import GuideSwitcher from '@site/src/components/GuideSwitcher';
-// import content from './guideContent.js';
+import SdkRefAdmonition from '@site/src/components/SdkRefAdmonition';
+import SdkRef from '@site/src/components/SdkRefAdmonition/SdkRef';
+import { sdkIds } from '@site/src/constants';
+
+import {
+  useVersions,
+  useActiveDocContext,
+  // @ts-ignore eslint-ignore
+} from '@docusaurus/plugin-content-docs/client';
 
 This guide provides information on how to get data about events on Immutable X. Typically, this data is about current state (ie. asset ownership, open orders) or past transactions (ie. trades, asset transfers).
 
@@ -16,7 +23,7 @@ Examples of the types of data typically obtained include:
 * Orders, or details about a particular order
 * Historical trades and asset transfers
 
-Getting most forms of data is read-only, so user authentication or [getting user signatures](./generate-signers) to update blockchain state are not required.
+Getting most forms of data is read-only, so [user authentication or getting user signatures](./generate-signers) to update blockchain state are not required.
 
 **Available with:**
 * Core SDK:
@@ -42,9 +49,9 @@ This is the only section that requires user signatures - specifically, project o
 <Tabs>
   <TabItem value="typescript" label="Typescript Core SDK">
 
-:::info SDK reference
-[getProjects](../../../../api-docs/sdk-references/core-sdk-ts/0-6-0/interfaces/ProjectsApiGetProjectsRequest.html)
-:::
+<SdkRefAdmonition sdkId={sdkIds.coreTypescript}>
+  <SdkRef method={'getProjects'} pathAfterVersion={'classes/immutablex.immutablex#getProjects'} />
+</SdkRefAdmonition>
 
 ### Request
 
@@ -91,20 +98,18 @@ getProjects(ethSigner)
 ```
   </TabItem>
   <TabItem value="kotlin" label="Kotlin (JVM) Core SDK">
-    Add description, if required.
-    <br/><br/>
 
-```kotlin
-// Add code
-``` 
+:::info SDK reference
+[getProjects](../../../../sdk-references/core-sdk-kotlin/0-6-0/imx-core-sdk-kotlin-jvm/com.immutable.sdk.api/-projects-api/get-projects.html)
+:::
+
   </TabItem>
   <TabItem value="Swift" label="Swift Core SDK">
-    Add description, if required.
-    <br/><br/>
 
-```swift
-// Add code
-```
+:::info SDK reference
+[getProjects](../../../../sdk-references/core-sdk-swift/0-2-2/documentation/immutablexcore/projectsapi/getprojects(imxsignature:imxtimestamp:pagesize:cursor:orderby:direction:))
+:::
+
   </TabItem>
   <TabItem value="go" label="Golang Core SDK">
 
@@ -118,7 +123,9 @@ getProjects(ethSigner)
 <Tabs>
   <TabItem value="typescript" label="Typescript Core SDK">
 
-SDK reference: [getProject](../../../../api-docs/sdk-references/core-sdk-ts/0-6-0/interfaces/ProjectsApiGetProjectRequest.html)
+:::info SDK reference
+[getProject](../../../../sdk-references/core-sdk-ts/0-6-0/interfaces/ProjectsApiGetProjectRequest.html)
+:::
 
 ### Request
 
@@ -155,20 +162,16 @@ getProject(ethSigner, '145')
 ```
   </TabItem>
   <TabItem value="kotlin" label="Kotlin (JVM) Core SDK">
-    Add description, if required.
-    <br/><br/>
 
-```kotlin
-// Add code
-``` 
+:::info SDK reference
+[getProject](../../sdk-references/core-sdk-kotlin/0-6-0/imx-core-sdk-kotlin-jvm/com.immutable.sdk.api/-projects-api/get-project.html)
+::: 
   </TabItem>
   <TabItem value="Swift" label="Swift Core SDK">
-    Add description, if required.
-    <br/><br/>
 
-```swift
-// Add code
-```
+:::info SDK reference
+[getProject](../../../../sdk-references/core-sdk-swift/0-2-2/documentation/immutablexcore/projectsapi/getproject(id:imxsignature:imxtimestamp:))
+:::
   </TabItem>
   <TabItem value="go" label="Golang Core SDK">
 
@@ -176,7 +179,7 @@ getProject(ethSigner, '145')
 [GetProject](https://pkg.go.dev/github.com/immutable/imx-core-sdk-golang@v0.2.0/imx#Client.GetProject)
 :::
 
-See [GetProject example](https://github.com/immutable/imx-core-sdk-golang/blob/main/imx/examples/project/main.go) from our SDK repo.
+See [GetProject example](https://github.com/immutable/imx-core-sdk-golang/blob/main/imx/examples/project/main.go#L28-L29) from our SDK repo.
   </TabItem>
 </Tabs>
 
@@ -324,9 +327,10 @@ getCollection('0x61e506cec264d5b2705f10e5a934dc5313a56a6e')
   </TabItem>
   <TabItem value="kotlin" label="Kotlin (JVM) Core SDK">
 
-```kotlin
-// Add info
-```
+:::info SDK reference
+[getCollection](https://docs.x.immutable.com/sdk-references/core-sdk-ts/1.0.0-beta.2/classes/immutablex.immutablex#getCollection)
+:::
+/sdk-references/core-sdk-kotlin/0-6-0/imx-core-sdk-kotlin-jvm/com.immutable.sdk.api/-collections-api/get-collection.html
   </TabItem>
   <TabItem value="Swift" label="Swift Core SDK">
     Add description, if required.

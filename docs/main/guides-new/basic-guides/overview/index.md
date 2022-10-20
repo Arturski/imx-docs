@@ -9,9 +9,9 @@ import TabItem from '@theme/TabItem';
 import DocCardList from '@theme/DocCardList';
 import {useCurrentSidebarCategory} from '@docusaurus/theme-common';
 
-Guides provide information on how to execute key functionality of the Immutable X platform using our developer tools.
+# Basic guides
 
-[**Read more about our SDKs and how they work together >**](/docs/sdks)
+These guides provide information on how to execute **key functionality** of the Immutable X platform using our developer tools.
 
 ### Each guide provides information for building on:
 * [StarkEx settlement layer](/docs/overview-new/immutable-layer-2#layer-2s-on-immutable-x), using our:
@@ -21,6 +21,8 @@ Guides provide information on how to execute key functionality of the Immutable 
     JS and Link SDKs will be deprecated soon. If you have not yet started building, **do not** build on these. If you have already started building with this, please make plans to switch over to the [Core SDK](/docs/sdks).
     :::
 * [StarkNet settlement layer](/docs/overview-new/immutable-layer-2#layer-2s-on-immutable-x), by extending or integrating wtih our StarkNet contracts.
+
+[**Read more about our SDKs and how they work together >**](../sdks)
 
 ## Guides:
 <DocCardList items={useCurrentSidebarCategory().items}/>

@@ -6,7 +6,7 @@ sidebar_position: 7
 keywords: [imx-wallets]
 ---
 
-:::note Link reference tool
+:::tip Link reference tool
 Check out our **[Link reference tool](https://tools.immutable.com/link-reference/)** to understand how `Link` methods work without having to write any code.
 :::
 

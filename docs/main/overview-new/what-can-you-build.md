@@ -4,20 +4,20 @@ slug: "/overview-new/what-can-you-build"
 sidebar_position: 3
 ---
 
-Immutable X allows you to create applications on layer 2 by interacting with its APIs and developer tools. It provides the key functionality you'll need to build web3 games or NFT applications without having to deploy your own smart contracts (for the most part), or build your own ZK rollup batching mechanisms.
+Immutable X allows you to create applications on layer 2 by interacting with its [API](../../reference) and [developer tools](../sdks). It provides the key functionality you'll need to build web3 games or NFT applications without having to deploy your own complicated smart contracts.
 
-### On this page:
-* [What functionality do web3 games and applications need?](#what-functionality-do-web3-games-and-applications-need)
-* [What functionality does Immutable X provide?](#what-functionality-does-immutable-x-provide)
+Before starting to build on Immutable X, it's important to understand:
+* [What functionality does your application need?](#what-functionality-do-web3-games-and-applications-need)
+* [Does ImmutableX provide this functionality?](#what-functionality-does-immutable-x-provide)
 
-## What functionality do web3 games and applications need?
+## What functionality do web3 games and applications typically need?
 
-There are two main types of functionality that web3 games and applications will need:
+#### There are two main types:
 1. [Facilitate user transactions](#1-facilitate-user-transactions)
 2. [Retrieve data about current state and historical transactions](#2-retrieve-data-about-current-state-and-historical-transactions)
 
 ### 1. Facilitate user transactions
-These enable users to _do things_ on the blockchain. These transactions include:
+These enable users to _do things_ that update state on the blockchain. These transactions include:
 * Buying and selling assets
 * Minting NFTs
 * Transferring assets to other users
@@ -208,7 +208,7 @@ Immutable provide SDKs which are a wrapper around the API functions and make it 
 
 For more information on the SDKs that we have and how they work together, please see [here](/docs/sdks/).
 
-#### Get started with building:
-* [Launch a collection](/docs/launch-collection-new/overview)
-* [Guides](/docs/guides-new/get-started)
+### ⚒️ Start building
+* [**Launch a collection**](/docs/launch-collection-new/overview)
+* [**Guides**](/docs/guides-new/get-started)
 
