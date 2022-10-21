@@ -24,7 +24,7 @@
   - [Add a code block](#add-a-code-block)
   - [Add a table](#add-a-table)
   - [Add an admonition](#add-an-admonition)
-- [Document Instance Versioning](#document-instance-versioning)
+- [Docs Versioning](#docs-versioning)
 - [Hosted SDK API References](#hosted-sdk-api-references)
   - [Linking to Hosted SDK API References](#linking-to-hosted-sdk-api-references)
 - [Contributing](#contributing)
@@ -136,7 +136,15 @@ Some **content** with _markdown_ `syntax`. Check [this `api`](#).
 
 Read more about using [Admonitions in Docusaurus](https://docusaurus.io/docs/markdown-features/admonitions)
 
-## Document Instance Versioning
+## Docs versioning
+There are two sections of our docs that are versioned:
+* [SDK docs](#sdk-docs) ([example](https://docs.x.immutable.com/sdk-docs/core-sdk-ts/overview))
+* [Main documention](#main-docs) (files in [`/docs` folder](./docs/))
+
+Check out the [docusaurus docs on versioning](https://docusaurus.io/docs/versioning) for more info about how document instance versioning works.
+
+### SDK docs
+Our SDK documentation is versioned in accordance with each new SDK version.
 
 Instructions for versioning a document instance with the Docusaurus CLI tool.
 
@@ -180,7 +188,13 @@ A few things to note once a document set has been versioned:
 *  To update the latest/current (or previous) version docs, you will need to update the files in the appropriate `<doc_instance_id>_versioned_docs/version-<version>` folder.
 *  A version switcher button will appear next to the SDK switcher button of the newly versioned SDK docs. [Example of the version switcher](https://docs.x.immutable.com/sdk-docs/core-sdk-ts/overview) (in the right-hand sidebar).
 
-Check out the [docusaurus docs on versioning](https://docusaurus.io/docs/versioning) for more info about how document instance versioning works.
+### Main documentation
+
+Our docs are versioned to be archived. The `Current` version should always be referred to as it is the most up-to-date documentation of the Immutable X platform.
+
+The files in the [`/docs` folder](./docs/) represent the content in the `Current` version. Updating these will update this version.
+
+Versioning (archiving) the main documentation will only be undertaken by the Immutable team.
 
 ## Hosted SDK API References
 

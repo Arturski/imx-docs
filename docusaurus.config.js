@@ -140,6 +140,13 @@ const configuration = {
           sidebarPath: require.resolve('./sidebars/sidebars-docs.js'),
           // Please change this to your repo.
           editUrl: 'https://github.com/immutable/imx-docs/tree/main/',
+          includeCurrentVersion: true,
+          lastVersion: 'current',
+          versions: {
+            current: {
+              label: 'Current',
+            },
+          },
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),
@@ -238,6 +245,11 @@ const configuration = {
             label: 'Careers at Immutable',
             position: 'left',
             className: 'custom_sidebar_menu',
+          },
+          {
+            type: 'docsVersionDropdown',
+            position: 'right',
+            dropdownActiveClassDisabled: true,
           },
         ],
       },

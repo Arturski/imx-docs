@@ -443,8 +443,6 @@ button.DocSearch.DocSearch-Button:focus {
 
 /* Toggle color mode icon */
 .navbar__items.navbar__items--right>div:first-child {
-  width: 3rem;
-  height: 3rem;
   display: block !important;
 }
 
