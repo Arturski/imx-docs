@@ -142,6 +142,11 @@ const configuration = {
           editUrl: 'https://github.com/immutable/imx-docs/tree/main/',
           includeCurrentVersion: true,
           lastVersion: 'current',
+          versions: {
+            current: {
+              label: 'Current',
+            },
+          },
         },
         theme: {
           customCss: require.resolve('./src/css/custom.css'),

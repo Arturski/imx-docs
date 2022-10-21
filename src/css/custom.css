@@ -443,9 +443,9 @@ button.DocSearch.DocSearch-Button:focus {
 
 /* Toggle color mode icon */
 .navbar__items.navbar__items--right>div:first-child {
-  width: 3rem;
-  height: 3rem;
-  display: block !important;
+  /* width: 3rem;
+  height: 3rem; */
+  display: inline-block !important;
 }
 
 .navbar__items.navbar__items--right>div:first-child>button.clean-btn svg {
