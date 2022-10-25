@@ -1,73 +1,19 @@
 ---
-title: "Onboarding"
-slug: "/onboarding"
+id: "partner-with-a-marketplace"
+title: "Partner with a marketplace"
+slug: "/partner-with-a-marketplace"
+sidebar_position: 3
 keywords:
-  - imx-dx
+  - imx-partners
 ---
 
-Below is a high-level overview of the steps required to onboard with ImmutableX.
+import Button from "@site/src/components/Button";
 
-# 시작하기 전
-The ImmutableX test environment uses Goerli. 아직 준비하지 않았다면, 이더리움 지갑 및 몇몇 테스트 ETH로 [테스트를 준비](../getting-started-guide.md#prepare-to-test)하십시오. 또한 프로젝트를 등록할 수 있으려면 그전에 [사용자로 등록](../getting-started-guide.md#register-a-user-account)해야 합니다. :::info Common Terms  
-The following explains a couple of ImmutableX terms used throughout our guides:
+We have a number of new and existing marketplaces that are interested in providing launch support, launch exclusivity, and joint marketing efforts for projects building on ImmutableX.
 
-When you register a **collection** with ImmutableX it creates a **project**. 프로젝트는 [crypto-wallet address](../getting-started-guide.md#wallet)와 관련된 관리 수준의 독립체로, **소유자 주소**라고도 불립니다. 하나의 프로젝트에는 수많은 관련 **컬렉션**이 있습니다.
-:::
-## 1. 스마트 컨트랙트 배정
-L2의 모든 스마트 컨트랙트는 토큰이 제대로 입금 및 인출되기 위해서 현재 그에 상응하는 L1 이더리움 컨트랙트를 필요로 합니다.
+빠른 시일 내에 더 많은 마켓플레이스 파트너가 발표될 예정이오니 이 공간을 지켜봐 주십시오!
 
-To test your assets, minting, and trading flows, you need to deploy an ERC-721 contract on the Goerli test network, then register it with ImmutableX. Similarly, to mint on mainnet Ethereum, you need to deploy an ERC-721 contract on mainnet, then follow the same steps.
+흥미가 있는 경우, 가능한 한 많은 정보와 함께 아래의 양식을 작성하여 신청해 주십시오.
+<a href="https://forms.gle/1JLetz21mCQDuFPh7"><Button>지금 신청하기</Button></a><br /><br />
 
-스마트 컨트랙트의 예시는 [imx-contracts](https://github.com/immutable/imx-contracts) 레포에서 확인할 수 있습니다.
-
-L2에서 L1으로 자산을 인출할 수 있도록 하려면 [자산 민팅](../asset-management/asset-minting.md)의 테스트 가이드라인을 따르십시오.
-
-## 2. 프로젝트 등록
-NFT의 컬렉션을 생성하기 위해서는 먼저 컬렉션의 생성자로서 프로젝트를 등록해야 합니다.
-
-프로젝트는 소유자 주소, 즉 [사용자 계정의 등록](../getting-started-guide.md#register-a-user-account)에 사용되는 이더리움 지갑의 주소와 관련된 관리 차원의 개체입니다. 프로젝트 소유자만이 컬렉션 및 메타데이터 스키마의 생성과 업데이트 등의 관리 작업의 수행 권한을 받습니다.
-
-- 하나의 사용자 계정(지갑 주소로 정의)은 여러 프로젝트를 소유할 수 있습니다.
-- 하나의 프로젝트는 여러 컬렉션을 가질 수 있습니다.
-- 모든 프로젝트는 4주의 롤링 주기마다 **5개**의 컬렉션과 **50,000개**의 민팅 요청의 한도를 갖습니다.
-
-가이드 보기:[프로젝트 등록](./project-registration.md)
-
-## 3. 컬렉션 등록
-컬렉션은 하나의 프로젝트 하에서 민팅된 NFT 시리즈를 뜻하며 배포된 특정 스마트 컨트랙트에 해당합니다.
-
-All minted assets belong to a collection, and in order to mint assets on L2 you must first register your collection (smart contract) with ImmutableX.
-
-- 각각의 컬렉션은 프로젝트에 속합니다.
-- 각각의 컬렉션은 수많은 유사하거나 상이한 NFT를 포함합니다.
-
-가이드 보기:[컬렉션 등록](./collection-registration.mdx)
-
-## 4. 메타데이터 스키마 등록
-컬렉션의 메타데이터 스키마는 민팅할 수 있는 NFT의 속성뿐만 아니라 잠재적인 값과 그러한 속성의 유형을 설명합니다.
-
-예를 들어 "이미지 백그라운드는 0-255 사이의 임의의 색상 값일 수 있다" vs "이 목록의 특정 색상 값이다", 또는 "마켓플레이스 트레이더는 이 컬렉션을 속성으로 필터링할 수 있다" vs "할 수 없다"와 같은 식입니다.
-
-- 각각의 컬렉션은 메타데이터 스키마를 갖습니다.
-- 각각의 NFT는 메타데이터 스키마의 속성으로 정의됩니다.
-
-가이드 보기: [메타데이터 스키마 등록](./metadata-schema-registration.mdx)
-
-**[자산 메타데이터에 관해 더 알아보기](../asset-management/asset-metadata.mdx)**
-
-:::caution Metadata refreshing requires support
-While you can register your own collections and metadata on Goerli, you **cannot** execute a metadata refresh yourself.
-
-메타데이터 변경을 새로 고침하려면, [고객 지원팀에 연락](https://support.immutable.com)하여 재크롤링되어야 하는 토큰과 그 토큰에 실행되어야 하는 업데이트를 확인해야 합니다.
-
-요청에는 최대 2영업일(AEST)이 소요됩니다.
-:::
-## 5. 자산 민팅
-Once your contract has been registered, you can mint gas-free on ImmutableX.
-
-자세한 내용은 다음의 가이드를 확인하십시오.
-- [Minting on ImmutableX](../minting-on-immutable-x.md)
-- [자산 민팅](../asset-management/asset-minting.md)
-
-## 6. 애플리케이션 통합
-To start building an application on ImmutableX, see our [integrate your application](../integrate-your-application/index.md) guides.
+참고: 유감스럽게도 이뮤터블은 이 방식으로 모든 프로젝트를 지원할 수 없습니다. 프로젝트가 마켓플레이스의 기준에 맞는 경우, 마켓플레이스의 대리인이 연락을 드릴 것입니다.
