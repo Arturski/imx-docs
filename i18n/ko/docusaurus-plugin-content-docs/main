@@ -1,61 +1,61 @@
 ---
-id: "linkbatchnfttransfer"
-title: "Link.batchNftTransfer"
-slug: "/linkbatchnfttransfer"
-sidebar_position: 2
+id: "link-crypto-to-fiat"
+title: "Link.cryptoToFiat"
+slug: "/link-crypto-to-fiat"
+sidebar_position: 12
 keywords:
   - imx-wallets
 ---
 
-`1.3.52`버전부터 `@imtbl/imx-sdk`는 배치에서 대량 NFT 전송을 지원합니다. 새 배치 전송 플로우를 시작하려면, 그렇게 링크를 호출해야 합니다.
+The crypto to fiat functionality is available in SDK v1.21.3+ and is a collaboration between ImmutableX and Moonpay.
 
-```javascript
-const response = await link.batchNftTransfer(payload)
-```
+The exchange process allows users to sell crypto held on L2 on the ImmutableX platform directly for fiat funds. 이 금액은 사용자가 지정한 은행 계좌로 바로 입금됩니다. 이 환전에는 가스비가 들지 않으며 [Moonpay 거래 수수료](https://support.moonpay.com/hc/en-gb/articles/360011930117-What-fees-do-you-charge-)만 부과됩니다.
 
-페이로드가 `LinkParams.BatchNftTransfer` 유형인 경우:
+인출은 Moonpay 계정으로의 전송을 통해 L2에서 직접 이루어집니다.
+
+:::info 최소 인출 금액
+최소 인출 금액은 0.015ETH입니다.
+:::
+
+현재 이용 가능한 암호 화폐는 다음과 같습니다.
+- ETH
+
+
+:::caution 지원 국가
+
+암호화폐에서 명목화폐로의 환전은 EU, 영국, 엄선된 미국의 일부 주에서만 가능합니다.
+
+더 많은 정보를 알고 싶다면 [Moonpay의 업무 지원 센터](https://support.moonpay.com/hc/en-gb/articles/4406268234641-What-countries-are-supported-to-sell-crypto-with-MoonPay-)를 참조하십시오.
+:::
+
+:::danger 환전하려면 사용자 인증이 필요합니다
+`Link.cryptoToFiat({})`은 사용자가 인증을 거친 후 로그인한 상태에서만 호출해야 하며 그렇지 않으면 사용자의 재연결을 요구합니다
+:::
+
+이용 가능한 통화와 금액을 선택할 수 있는 옵션을 갖는 환전 절차를 개시하려면, 마켓플레이스가 환전 기능을 호출해야 합니다.
 
 ```typescript
-const payload: LinkParams.BatchNftTransfer = [
-  {
-    type: ERC721TokenType.ERC721, // Must be of type ERC721
-    tokenId: string, // the token ID
-    tokenAddress: string, // the collection address / contract address this token belongs to
-    toAddress: string, // the wallet address this token is being transferred to
-  },
-  //...remainingTransfers
-]
+await link.cryptoToFiat({})
 ```
 
-응답 유형은 [Link.transfer](./linktransfer.md)와 같습니다.
+This displays the Link UI with a screen when a user need to choose currency and enter amount:
 
-## 참고
+![매개 변수 없는 환전](/img/link-sdk-cryptotofiat/offramp-without-params.png "매개 변수 없는 환전")
 
-- 요청은 **100개**의 그룹으로 일괄 처리됩니다(이것은 현재 배치 사이즈로, 변경될 수 있으나 이는 구현에 영향을 미치지 않습니다).
+특정 통화의 환전 절차를 개시하려면 다음과 같이 작성합니다.
+```typescript
+await link.cryptoToFiat({ cryptoCurrencies: ['ETH'] })
+```
 
-- `ERC721TokenType.ERC721` 유형의 토큰만 `link.batchNftTransfer`에서 사용할 수 있습니다.
+이것은 사용자가 이미 정해진 통화의 금액만을 입력해야 할 때 화면에 링크 UI를 표시합니다.
 
-- 현재 배치에 인증 오류가 있는 경우, 전체 배치가 실행되지 않습니다
+![특정 통화로 환전](/img/link-sdk-cryptotofiat/offramp-with-currency.png "특정 통화로 환전")
 
-- 현재 배치 처리의 일부로 API 오류가 수령되는 경우, 전체 배치가 실패합니다
+지정된 통화와 금액으로 환전 절차를 개시하려면 다음과 같이 작성합니다.
 
-- 특정 배치에 오류가 존재하는 경우(인증, API, 또는 기타 이유로), 다음 배치로 계속 진행할 수 있습니다.
+```typescript
+await link.cryptoToFiat({ cryptoCurrencies: ['ETH'], amount: '0.01' })
+```
+이것은 로딩된 Moonpay 위젯과 함께 링크 UI를 표시합니다.
 
-- 각 확인에는 사용자 지갑에서의 서명 과정이 수반됩니다.
-
-## 사용자 여정의 스크린샷
-
-'@docusaurus/useBaseUrl'에서 useBaseUrl를 임포트;
-
-
-![일괄 전송 확인](/img/linkbatchnfttransfer/confirm-transfer-batch.png "일괄 전송 확인")
-
-![첫 번째 배치 완료](/img/linkbatchnfttransfer/first-batch-complete.png "첫 번째 배치 완료")
-
-![모든 배치 완료](/img/linkbatchnfttransfer/batch-complete.png "모든 배치 완료")
-
-![인증 오류 예시](/img/linkbatchnfttransfer/example-validation-error.png "인증 오류 예시")
-
-## 오류
-
-오류 응답은 [여기](./link-errors.md#transfer)를 확인하십시오.
+![특정 통화 및 금액으로 환전](/img/link-sdk-cryptotofiat/offramp-with-currency-and-amount.png "특정 통화 및 금액으로 환전")
