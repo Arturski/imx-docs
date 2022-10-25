@@ -1,107 +1,59 @@
 ---
-id: 'sdks'
-title: 'ImmutableX SDKs'
-slug: '/sdks'
-description: 'ImmutableX SDKs'
+id: "code-examples"
+title: "Code Examples"
+slug: "/code-examples"
+sidebar_position: 4
 keywords:
   - imx-dx
 ---
 
-'@site/src/components/SdkButtonList'에서 SdkButtonList 가져오기; '@site/src/components/Article/styles.module.css'에서 articleStyles 가져오기; '@site/src/constants'에서 { coreSDKs, walletSDKs, linkSDK } 가져오기;
+import Button from '@site/src/components/Button';
+import RightArrowIcon from '@site/static/icons/RightArrow';
+import styles from '@site/src/components/Article/styles.module.css';
 
-# SDK 개요
+## IMX 컨트랙트
 
-이뮤터블은 애플리케이션 개발자들이 기본적인 기능뿐만 아니라 더욱 발전된 기능을 실행하는 것을 쉽게 만들어 줄 다양한 언어와 프레임워크에 SDK를 제공합니다.
+IMX 컨트랙트 리포지토리에는 hardhat에 기반 스크립트와 함께 배포할 수 있는 샘플 L1 스마트 컨트랙트가 있습니다.
 
-제공되는 유형에는 세 가지가 있습니다.
-* **[Core SDK](#core-sdks)** - API 엔드 포인트에 대한 래퍼뿐만 아니라 일반 동작을 더 쉽게 구현할 수 있게 해주는 워크 플로우 기능을 제공합니다. It facilitates all the functionality that the ImmutableX platform provides.
-* **[Wallet SDK](#wallet-sdks)** - 다양한 플랫폼 상의 사용자 지갑을 연결하고 상태 업데이트 트랜잭션(즉, 오더 매도, 자산의 소유권 이전)의 사용자 승인(서명)을 가능하게 만들어 애플리케이션이 [사용자 트랜잭션](#what-are-user-transactions)을 촉진하게 만듭니다. Core SDK와 함께 사용될 수 있습니다.
-* **[Link SDK](../main/guides/link-sdk/index.md)** - 사용자들이 볼 수 있는 유저 인터페이스, 이러한 트랜잭션의 서명 및 승인을 포함해 [사용자 트랜잭션](#what-are-user-transactions)을 촉진하는 데 필요한 모든 기능을 제공합니다.
-
-#### ***사용자 트랜잭션이란?***
-사용자 트랜잭션은 자산 소유자의 승인(서명)이 필요한 자산 소유권의 변경을 다루는 거래입니다. 이러한 트랜잭션은 단순히 데이터를 읽는 것과는 대조적으로, 블록체인에 있는 자산의 상태를 업데이트합니다.
-
-## SDK들은 어떻게 함께 작동하나요?
-
-The **Core SDK** is responsible for the bulk of functionality that is available on the ImmutableX platform. 이것은 사용자의 승인을 요구하는 특정 트랜잭션에 서명할 수 있도록 사용자 지갑과 연결하기 위해 **Wallet SDK**와 함께 사용될 수 있습니다.
-
-**Link SDK**는 사용자 트랜잭션의 대부분에 종단간 기능을 제공하며 다른 SDK와 함께 사용될 필요가 없습니다.
-
-### 기능 매트릭스 예시
-<table>
-    <tbody>
-        <tr>
-            <th></th>
-            <th colspan="1">사용자 지갑에 연결</th>
-            <th colspan="4">사용자 서명이 필요한 동작</th>
-            <th colspan="4">사용자 서명이 필요하지 않은 동작</th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>트랙잭션 서명</th>
-            <th>사용자 등록</th>
-            <th>오더 및 거래 생성</th>
-            <th>L1-L2 전송(입금 및 인출)</th>
-            <th>L2 토큰 민팅</th>
-            <th>자산 목록 가져오기</th>
-            <th>오더 가져오기</th>
-            <th>거래 가져오기</th>
-            <th>사용자 잔고 가져오기</th>
-        </tr>
-        <tr>
-            <th>Wallet SDK</th>
-            <td>✅</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-        </tr>
-        <tr>
-            <th>Link SDK</th>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>        
-        </tr>
-        <tr>
-            <th>Core SDK</th>
-            <td>❌</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-        </tr>
-    </tbody>
-</table>
-
-## Core SDK
-<SdkButtonList sdks={coreSDKs} />
-
-## Wallet SDK
-<SdkButtonList sdks={walletSDKs} />
-
-## Link SDK
-<SdkButtonList sdks={linkSDK} />
-
-## 오픈 API 사양
-
-이뮤터블의 오픈 API 사양은 다양한 언어에서 자동 클라이언트 생성을 지원함으로써 개발자들이 API와 효율적으로 상호 작용할 수 있는 자율권을 부여합니다.
-
-<a href="https://github.com/immutable/imx-core-sdk/blob/main/openapi.json">
+<a href="https://github.com/immutable/imx-contracts">
   <Button>
-    이뮤터블 오픈 API 사양 <RightArrowIcon className={articleStyles.ctaIcon} />
+    IMX 컨트랙트
+    <RightArrowIcon className={styles.ctaIcon} />
+  </Button>
+</a>
+
+## IMX 예시
+
+IMX 예시 리포지토리에는 IMX API와 상호 작용하는 스크립트가 일부 있습니다. 이 리포지토리에는 특히 프로젝트를 이뮤터블에 [온보딩](./guides/onboarding/index.md)하는 것과 관련된 모든 코드가 있습니다.
+
+<a href="https://github.com/immutable/imx-examples">
+  <Button>
+    IMX 예시 <RightArrowIcon className={styles.ctaIcon} />
+  </Button>
+</a>
+
+## IMX Reactjs 통합 예시
+
+This repository contains a skeleton React app for the purpose of providing code examples for building a marketplace on ImmutableX. It covers:
+
+* 매도 오더와 NFT 매수 보기
+* View ImmutableX inventory and ETH balance
+* 매도 오더 생성 및 취소
+* Minting on ImmutableX
+* ETH와 NFT 입금 및 인출
+
+<a href="https://github.com/immutable/imx-reactjs-integration-example">
+  <Button>
+    IMX Reactjs 통합 예시 <RightArrowIcon className={styles.ctaIcon} />
+  </Button>
+</a>
+
+## IMX 가이드(커뮤니티 유지 관리)
+
+이 리포지토리는 IMX에 대한 커뮤니티 관리 가이드입니다.
+
+<a href="https://github.com/8bNFT/incomplete-guide-to-imx">
+  <Button>
+    IMX 가이드(커뮤니티 유지 관리)<RightArrowIcon className={styles.ctaIcon} />
   </Button>
 </a>
