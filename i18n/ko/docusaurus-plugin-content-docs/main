@@ -1,49 +1,115 @@
 ---
-id: "withdrawing-payouts"
-title: "Withdrawing payouts"
-slug: "/withdrawing-payouts"
-sidebar_position: 3
+title: "Collection registration"
+slug: "/collection-registration"
+sidebar_position: 2
 keywords:
-  - imx-traders
+  - imx-games
 ---
 
-To withdraw your funds from ImmutableX (Layer 2), you can do so via the API or ImmutableX Marketplace.
+컬렉션 등록 전 사용자는 [자신의 프로젝트를 등록](./project-registration.md)해야 합니다.
 
-## Steps to Withdraw via ImmutableX Marketplace
-1. Go to the [ImmutableX Marketplace](https://market.x.immutable.com).
-2. 이더리움 메인넷에 지갑을 연결합니다.
+컬렉션은 배포된 스마트 컨트랙트를 나타냅니다. All minted assets belong to a collection, and in order to mint assets on L2 you must first register your collection (smart contract) with ImmutableX.
 
-![이더리움 메인넷에 연결하기](/img/withdrawing-payouts/connect-to-ethereum.png)
+각각의 컬렉션은 하나의 프로젝트에 속하며, 모든 프로젝트는 4주 기간 내에 **5개**의 컬렉션을 생성하도록 제한됩니다. [더 알아보기](./project-registration.md#project-limits).
 
-![지갑 연결하기](/img/withdrawing-payouts/connect-wallet.png)
+:::info 프로젝트 한도 늘리기
+민팅과 컬렉션의 프로젝트 한도는 자신의 프로젝트에 대해 [고객 지원팀](https://support.immutable.com)에 연락함으로써 증가될 수 있습니다. 증가해야 하는 이유를 꼭 설명하십시오. 이뮤터블 X 팀에서는 사용자의 요청에 2 영업일 내에 응답합니다.
+:::
 
-3. 사용자의 인벤토리 페이지로 이동합니다.
+## 컬렉션 생성
+컬렉션에는 다음의 필드가 포함됩니다.
 
-![인벤토리](/img/withdrawing-payouts/inventory.jpg)
+<table>
+  <thead>
+  <tr>
+    <th>필드</th>
+    <th>필수(기본 값)</th>
+    <th>값 유형 / 참고</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      <code>name</code>
+    </td>
+    <td>예</td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td>
+      <code>description</code>
+    </td>
+    <td>아니오</td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td>
+      <code>owner_public_key</code>
+    </td>
+    <td>예</td>
+    <td>이 값이 <code>contract_address</code>에 지정된 스마트 컨트랙트의 소유자와 일치하도록 하십시오. <code>owner_public_key</code>는 업데이트할 수 없습니다.</td>
+  </tr>
+  <tr>
+    <td>
+      <code>contract_address</code>
+    </td>
+    <td>예</td>
+    <td><code>contract_address</code> 필드는 유효한 스마트 컨트랙트를 반드시 포함해야 합니다. 이뮤터블 X는 지정된 주소에 바이트코드가 존재하도록 하여 이를 인증합니다.</td>
+  </tr>
+  <tr>
+    <td><code>metadata_api_url</code></td>
+    <td>예</td>
+    <td><a href="minting-on-immutable-x#metadata-api">여기를 참고하십시오</a></td>
+  </tr>
+  <tr>
+    <td><code>icon_url</code></td>
+    <td>아니오</td>
+    <td>마켓플레이스에 깨진 아이콘 링크가 나타날 수 있으므로 이 값으로 비어 있는 텍스트나 url이 아닌 값을 넣지 마십시오.</td>
+  </tr>
+  <tr>
+    <td><code>collection_image_url</code></td>
+    <td>아니오</td>
+    <td>표시 목적으로 사용됩니다.</td>
+  </tr>
+  </tbody>
+</table>
 
-4. Click on "ImmutableX" balance next to the deposit button on the far right.
+:::info 예시 코드 보기
+이뮤터블 X의 저장소 [imx-examples](https://github.com/immutable/imx-examples)에서는 사용하기 간편한 오픈 소스 예시를 제공합니다. 시작하려면 README에 있는 안내를 따르십시오.
+:::
 
-![Click on ImmutableX](/img/withdrawing-payouts/click-on-immutable-x.jpg)
+## 기존 컬렉션 업데이트
+<table>
+  <thead>
+  <tr>
+    <th>필드</th>
+    <th>값 유형 / 참고</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      <code>name</code>
+    </td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td>
+      <code>description</code>
+    </td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td><code>icon_url</code></td>
+    <td>마켓플레이스에 깨진 아이콘 링크가 나타날 수 있으므로 이 값으로 비어 있는 텍스트나 url이 아닌 값을 넣지 마십시오.</td>
+  </tr>
+  <tr>
+    <td><code>collection_image_url</code></td>
+    <td>표시 목적으로 사용됩니다.</td>
+  </tr>
+  </tbody>
+</table>
 
-5. ETH 또는 ERC-20 중에서 인출을 원하는 토큰을 하나 선택합니다.
-6. 금액을 적고 계속 버튼을 눌러 링크 프로세스를 따라 거래에 서명합니다. 그러면 L2에서 L1으로의 인출이 준비됩니다.
-
-![금액 입력](/img/withdrawing-payouts/specify-amount.jpg)
-
-![인출 준비 확인](/img/withdrawing-payouts/confirm-prepare-withdrawal.jpg)
-
-![인출 준비 중](/img/withdrawing-payouts/preparing-withdrawal.jpg)
-
-7. 어느 정도(현재 약 12시간 소요) 시간이 흐르면 L1으로의 인출이 준비됩니다. At this point if you go back into the ImmutableX Marketplace, you should see "preparing withdrawal" change to "withdrawal ready".
-
-![인출 준비 완료](/img/withdrawing-payouts/withdrawal-ready.jpg)
-
-8. '인출 준비 완료'를 클릭하여 L1으로 인출하려는 ETH 또는 ERC-20 토큰을 선택합니다.
-
-![인출 준비 완료](/img/withdrawing-payouts/withdraw-ready.jpg)
-
-9. 링크에서 확인 절차를 따릅니다.
-
-![확인](/img/withdrawing-payouts/confirmation.jpg)
-
-10. 사용자의 L1 지갑에 잔고가 곧 나타납니다(현재 약 12시간 소요). 가스 비용을 줄이기 위해 거래를 일괄로 묶어 하나의 증명을 온체인에 보내기 때문에 지연이 있습니다.
+:::caution 이 필드는 수정이 허용되지 않습니다
+`contract_address`는 변경해서는 안 되는 필드입니다. 민팅 후 `metadata_api_url`가 수정되면 이전 `metadata_api_url`를 사용한 기존 자산이 수정됩니다.  새로운 민팅에는 `metadata_api_url`가 사용됩니다.
+:::
