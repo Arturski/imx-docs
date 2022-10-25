@@ -1,189 +1,289 @@
 ---
-id: "asset-ownership"
-title: "Asset Ownership"
-slug: "/asset-ownership"
-sidebar_position: 1
+id: 'asset-metadata'
+title: 'Asset Metadata'
+slug: '/asset-metadata'
+sidebar_position: 2
 keywords:
   - imx-games
 ---
 
-Supporting ImmutableX Assets in your application lets your users use their assets while they are tradable in ImmutableX. As ImmutableX is an asset and trading protocol, rather than an exclusive solution, you can support ImmutableX assets alongside assets from any other Layer 2 protocol, or Ethereum mainnet itself.
+ImmutableX allows for projects to specify metadata properties for their assets. 이러한 속성은 마켓플레이스가 사용자들이 원하는 것을 더욱 효과적으로 찾을 수 있게 도와주는 복잡한 필터링 쿼리를 수행할 수 있게 해줍니다. :::success 메타데이터 새로 고침  
+사용자는 변경 내용에 기초해 자산 메타데이터를 업데이트하기 위해 [메타데이터 새로 고침을 요청](/docs/asset-metadata-refreshes)할 수 있습니다. 이 때 사용자는 재크롤링할 토큰과 [Metadata API](/docs/minting-on-immutable-x#metadata-api)를 통해 업데이트된 내용을 식별해야 합니다.
 
-Users of any NFT-based application can choose to deposit their assets into ImmutableX to reap the UX and scalability benefits we provide. Supporting ImmutableX natively will improve the experience of those users, will make serious traders more likely to use your project, and will give your application access to our powerful Layer 2 liquidity features.
+이뮤터블 X는 2 영업일(호주 시간) 이내에 요청을 처리하는 것을 목표로 하고 있습니다. 하지만 요청에 따라 더 오랜 시간이 소요될 수도 있습니다.
+:::
 
-ImmutableX is a fully API-based protocol, so integrating is easy regardless of your level of blockchain experience - it can usually be done in hours.
+## 핵심 속성
 
-## 프로젝트 등록하기
-Before assets from your project will be tradable on ImmutableX, you must register your project with Immutable. 이 절차는 자동화될 예정이나 현재는 수동으로 사용자와 사용자의 프로젝트 소유권을 확인합니다.
+이뮤터블 X에는 여러 핵심 속성이 있습니다.
 
-## 컬렉션 등록하기
-각 프로젝트는 다양한 자산 컬렉션을 유지할 수 있습니다. 예를 들어 이뮤터블 X는 갓즈 언체인드(Gods Unchained)에서 카드, 장신구, 보드를 보유하고 있습니다. 컬렉션은 ERC721 컨트랙트에 1:1로 묶이며 따라서 그 주소로 고유하게 식별할 수 있습니다.
-
-## 자산 API 소비하기
-자산은 다음의 상태 중 하나를 가질 수 있습니다.
 <table>
   <thead>
-  <tr>
-    <th>
-      상태
-    </th>
-    <th>
-      설명
-    </th>
-  </tr>
+    <tr>
+      <th>속성</th>
+      <th>설명</th>
+      <th>필수 입력 필드</th>
+    </tr>
   </thead>
   <tbody>
-  <tr>
-    <td>
-      <code>imx</code>
-    </td>
-    <td>
-      The asset is in the ImmutableX L2 environment.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <code>eth</code>
-    </td>
-    <td>
-      자산이 메인 이더리움 블록체인에 있음.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <code>depositing</code>
-    </td>
-    <td>
-      자산이 여전히 메인 이더리움 블록체인에 있으나 현재 진행 중인 트랜잭션의 일부임.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <code>pendingWithdrawal</code>
-    </td>
-    <td>
-      이 자산에 대한 인출이 요청되었으며 다음 배치에 포함될 예정임.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <code>withdrawable</code>
-    </td>
-    <td>
-      The asset has been included in a published batch, and can now be withdrawn from the ImmutableX smart contract.
-    </td>
-  </tr>
-  <tr>
-    <td>
-      <code>withdrawing</code>
-    </td>
-    <td>
-      The asset is on the main Ethereum blockchain, and is being pulled from the ImmutableX smart contracts to a user's account.
-    </td>
-  </tr>
+    <tr>
+      <td>
+        <code>name</code>
+      </td>
+      <td>이 자산의 표시명</td>
+      <td>아니오</td>
+    </tr>
+    <tr>
+      <td>
+        <code>description</code>
+      </td>
+      <td>이 자산의 설명</td>
+      <td>아니오</td>
+    </tr>
+    <tr>
+      <td>
+        <code>image_url</code>
+      </td>
+      <td>
+        이 자산 표시 이미지의 URL. This will be used as a
+        video thumbnail in the ImmutableX Marketplace.
+      </td>
+      <td>아니오</td>
+    </tr>
+    <tr>
+      <td>
+        <code>image</code>
+      </td>
+      <td>image_url의 대안 필드.</td>
+      <td>아니오</td>
+    </tr>
+    <tr>
+      <td>
+        <code>animation_url</code>
+      </td>
+      <td>
+        항목의 멀티미디어 첨부 URL. 이뮤터블 X는 HTTP를 통한
+        영상 스트리밍에 HLS 포맷을 사용할 것을 적극 권장합니다. 보통 영상 
+        NFT에 사용됩니다.
+      </td>
+      <td>아니오</td>
+    </tr>
+    <tr>
+      <td>
+        <code>animation_url_mime_type</code>
+      </td>
+      <td>
+        animation_url이 지목하는 MIME 타입 파일. 현재 이뮤터블 X는 
+        3가지 MIME 타입만을 지원합니다.{' '}
+        <ul>
+          <li>application/vnd.apple.mpegurl,</li> <li>video/mp4,</li>{' '}
+          <li>video/webm</li>
+        </ul>
+      </td>
+      <td>
+        예*
+        <br />
+        <strong>주의:</strong>animation_url이 지정되는 경우, 이 필드는 필수적으로 입력해야
+        합니다. 지정되지 않으면 다른 필드와 마찬가지로 선택적으로 입력합니다.
+      </td>
+    </tr>
+    <tr>
+      <td>
+        <code>youtube_url</code>
+      </td>
+      <td>
+        YouTube 영상 URL. This playback method is currently not
+        supported in the ImmutableX Marketplace, but third party support could
+        be built.
+      </td>
+      <td>아니오</td>
+    </tr>
   </tbody>
 </table>
 
-To display assets which are currently in ImmutableX, you will need to use the [Assets API](/reference#/operations/listAssets). 이 API는 모든 자산(온체인에 있는 자산 또는 인출 과정 중에 있는 자산 포함)을 반환한다는 점에 유념하십시오. 일반적인 경우 사용자의 인벤토리를 표시합니다.
-```bash
-GET https://api.x.immutable.com/v1/assets?collection=0x...&user=0x...&status=imx
-```
+위의 핵심 속성들은 속성의 필터링을 원하지 않는다면 유형으로 매핑할 필요가 없습니다.
 
-`status=imx`를 설정하면 같은 자산을 두 번 표시하는 것을 방지하는 데 도움이 됩니다(애플리케이션의 자산을 추적하는 데 이미 이더리움을 사용하고 있는 경우). This endpoint will return assets in the following format (note the cursor&remaining properties):
+파트너들에게는 `animation_url`를 통해 자신의 영상 자산을 호스트하고 위치를 노출할 것이 요청될 것입니다.
+
+영상 NFT의 경우, 개별 마켓플레이스에서 영상을 루프할 것인지, 자동 재생을 지원할 것인지, 최소 로딩 시 뮤트할 것인지 결정할 수 있습니다. 프로토콜은 특정 마켓플레이스에서의 영상 재상 방식을 정의하지 않습니다.
+
+## 속성 유형 매핑
+
+The following is the source of truth specification for how metadata filters function in ImmutableX. Metadata filters let API consumers filter returned NFTs by their metadata properties. 이 필터는 많은 엔드 포인트에 적용됩니다.
+
+NFT가 이뮤터블 X 데이터베이스에 아직 존재하지 않는 메타데이터 키를 가지고 있는 경우, 그 새로운 키와 값은 이뮤터블 X 데이터베이스에 추가됩니다.
+
+이뮤터블 X 데이터베이스에서 메타데이터 속성은 다음의 유형 중 하나로 저장됩니다.
+
+<table>
+  <thead>
+    <tr>
+      <th>유형</th>
+      <th>설명</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>enum</td>
+      <td>
+        가능값의 정의된 에뮬레이션이 있는 속성(예: 신=
+        자연 또는 죽음).
+      </td>
+    </tr>
+    <tr>
+      <td>text</td>
+      <td>
+        임의의 텍스트를 포함하는 속성. 검색 가능해야 함. 필터링
+        불가능.
+      </td>
+    </tr>
+    <tr>
+      <td>boolean</td>
+      <td>true 또는 false 중 하나가 될 수 있는 속성.</td>
+    </tr>
+    <tr>
+      <td>discrete</td>
+      <td>
+        보통 다중 선택(예: 마나)으로 처리되는 속성.
+      </td>
+    </tr>
+  </tbody>
+</table>
+
+이뮤터블 X 데이터베이스의 매핑 예시
+
+<table>
+  <thead>
+    <tr>
+      <th>키</th>
+      <th>data_type</th>
+      <th>필터링 가능 여부</th>
+    </tr>
+  </thead>
+  <tbody>
+    <tr>
+      <td>공격</td>
+      <td>discrete</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>신</td>
+      <td>enum</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>체력</td>
+      <td>discrete</td>
+      <td>false</td>
+    </tr>
+    <tr>
+      <td>마나</td>
+      <td>discrete</td>
+      <td>false</td>
+    </tr>
+    <tr>
+      <td>이름</td>
+      <td>text</td>
+      <td>false</td>
+    </tr>
+    <tr>
+      <td>품질</td>
+      <td>enum</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>희귀도</td>
+      <td>enum</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>세트</td>
+      <td>enum</td>
+      <td>true</td>
+    </tr>
+    <tr>
+      <td>유형</td>
+      <td>enum</td>
+      <td>true</td>
+    </tr>
+  </tbody>
+</table>
+
+## 필터링 가능 변수
+
+필터링 가능한 변수는 메타데이터의 속성이 반드시 최종 사용자가 자산을 필터링할 수 있는 무언가여야 한다는 신호를 마켓플레이스로 보내는 불린 조건입니다. 그러면 모든 메타데이터 속성을 계속해서 텍스트로 검색할 수 있을 뿐만 아니라, 특정한 콜렉션에 맞춰진 마켓플레이스 UI에서 마켓플레이스가 특정한 필터링을 수행할 수도 있습니다.
+
+'필터링 가능한(filterable)' 변수는 텍스트가 아닌 변수 유형에서만 **true**가 될 수 있다는 점에 유의해 주십시오.
+
+필터는 JSON 메타데이터 객체의 최고 수준의 속성에 대해서만 생성됩니다.
+
+## 메타데이터 예시
+
 ```json
 {
-  "result": [
-    {
-      "token_address": "0x...",
-      "token_id": "40710",
-      "id": "0x...",
-      "user": "0x...",
-      "status": "imx",
-      "uri": null,
-      "name": "Strider",
-      "description": null,
-      "image_url": "https://gog-art-assets.s3-ap-southeast-2.amazonaws.com/Content/Thumbnails/Heroes/Strider/Thumbnail_Hero_Strider_Base.png",
-      "metadata": {
-        "name": "Strider",
-        "type": 20,
-        "class": "Ranged",
-        "series": "Founder",
-        "assetId": "6151dc9d6e34330016119912",
-        "element": "Earth",
-        "faction": "Glade",
-        "tagline": "Untamed Huntress",
-        "image_url": "https://gog-art-assets.s3-ap-southeast-2.amazonaws.com/Content/Thumbnails/Heroes/Strider/Thumbnail_Hero_Strider_Base.png",
-        "rarityStr": "Rare",
-        "serialNumber": "9565",
-        "animation_url": "https://guildofguardians.mypinata.cloud/ipfs/QmYdcnb6b2LTbtzWce8yw5acXxauSFvxK9zo9MPLhAwR2w/HLS/Base/CollectionAsset_Hero_Strider_Base.m3u8",
-        "specialEditionStr": "Normal",
-        "animation_url_mime_type": "application/vnd.apple.mpegurl"
-      },
-      "collection": {
-        "name": "Guild of Guardians - Row 18",
-        "icon_url": null
-      },
-      "created_at": "2021-09-27T16:33:19.409997Z",
-      "updated_at": "2021-10-11T14:37:36.368061Z"
-    }
-  ],
-  "cursor": "....",
-  "remaining": 1
+  // 코드 필드:
+  "name": "Rufus",
+  "animation_url": "https://guildofguardians.mypinata.cloud/ipfs/QmQDee8BPDfAH2ykRX375AWJwYZcbbJQa8wHokrSnMLLUC/HLS/Base/CollectionAsset_Hero_Rufus_Base.m3u8",
+  "animation_url_mime_type": "application/vnd.apple.mpegurl",
+  "image_url": "https://gog-art-assets.s3-ap-southeast-2.amazonaws.com/Content/Thumbnails/Heroes/Rufus/Thumbnail_Hero_Rufus_Base.png",
+
+  //  플랫 키/값 구조인 경우에 한해 추가적인(비핵심) 속성을 추가하면
+  // 콘트랙트가 등록된 스키마에 이 값들이 매칭됩니다.
+  "attack": 4,
+  "collectable": true,
+  "god": "Ranged",
+  "element": "Water",
+  "product": 2,
+  "rarity": 2,
+  "type": 3
 }
 ```
 
-```json title="Gods Unchained metadata endpoint"
-// GET https://api.godsunchained.com/metadata?collection=0x...&token_ids=1456,5423
+## 메타데이터 스키마 예시
 
+다음에 유의해 주십시오.
+
+- '필터링 가능한(filterable)' 변수는 텍스트가 아닌 변수 유형에서만 **true**가 될 수 있습니다.
+- enum 유형의 값은 제공하지 않아도 됩니다. 사용자의 메타데이터 엔드 포인트를 통해 이뮤터블 X에 전달되는 내용에 기초하여 값의 목록이 자동으로 생성됩니다.
+- discrete 유형 값의 범위는 필요하지 않습니다. 범위는 제공된 값의 리스트에 기초해 자동으로 생성됩니다.
+
+```json
 {
-    "0x...": {
-    "1456": {
-        "name": "Ratify",
-      "description": "",
-      "image_url": "",
-      "cache_for": 100,
-      "tradable": true,
-      "external_url": "",
-      "background_color": "",
-      "properties": {
-        "proto": {
-          "value": "300",
-          "type": "number"
-        },
-        "created": {
-          "value": "2020-09-04",
-          "type": "date"
-        },
-        "type": {
-          "value": "spell",
-          "type": "enum"
-        }
-      }
+  "metadata": [
+    {
+      "name": "name",
+      "type": "text"
     },
-    "5423": {
-        "name": "Ratify",
-      "description": "",
-      "image_url": "",
-      "cache_for": 100,
-      "tradable": true,
-      "external_url": "",
-      "background_color": "",
-      "properties": {
-        "proto": {
-          "value": "300",
-          "type": "number"
-        },
-        "created": {
-          "value": "2020-09-04",
-          "type": "date"
-        },
-        "type": {
-          "value": "spell",
-          "type": "enum"
-        }
-      }
+    {
+      "name": "attack",
+      "type": "discrete",
+      "filterable": true
+    },
+    {
+      "name": "collectable",
+      "type": "boolean",
+      "filterable": true
+    },
+    {
+      "name": "god",
+      "type": "enum",
+      "filterable": true
+    },
+    {
+      "name": "element",
+      "type": "enum",
+      "filterable": true
+    },
+    {
+      "name": "product",
+      "type": "discrete",
+      "filterable": true
+    },
+    {
+      "name": "type",
+      "type": "discrete",
+      "filterable": true
     }
-    }
+  ]
 }
 ```
-If you've set up the above, then your users will have full access to the liquidity and scalability of ImmutableX. If you'd like to support trading yourself, see our guide on [supporting asset trading](./trading-assets.md)
