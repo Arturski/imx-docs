@@ -1,101 +1,94 @@
 ---
-title: "Metadata schema registration"
-slug: "/metadata-schema-registration"
-sidebar_position: 3
+id: "link-deposit-options"
+title: "Link.deposit"
+slug: "/link-deposit-options"
+sidebar_position: 8
 keywords:
-  - imx-games
+  - imx-wallets
 ---
 
-메타데이터 등록 전, 사용자는 [컬렉션을 등록](./collection-registration.mdx)해야 합니다.
-
-## 컬렉션 메타데이터 스키마 추가
-
-오직 프로젝트 소유자(지갑 소유자)만이 메타데이터 스키마를 컬렉션에 추가할 수 있습니다. [스키마 예시는 이곳을 확인하십시오](../asset-management/asset-metadata.mdx#example-metadata-schema).
-
-각각의 메타데이터 스키마 속성은 다음의 필드를 포함합니다.
-<table>
-  <thead>
-  <tr>
-    <th>필드</th>
-    <th>필수(기본 값)</th>
-    <th>값 유형 / 참고 사항</th>
-  </tr>
-  </thead>
-  <tbody>
-  <tr>
-    <td>
-      <code>name</code>
-    </td>
-    <td>예</td>
-    <td>텍스트</td>
-  </tr>
-  <tr>
-    <td>
-      <code>type</code>
-    </td>
-    <td>아니오 (<code>"text"</code>)</td>
-    <td><a href='https://docs.x.immutable.com/docs/asset-metadata#property-type-mapping'>속성 유형 매핑을 확인하십시오</a></td>
-  </tr>
-  <tr>
-    <td>
-      <code>filterable</code>
-    </td>
-    <td>아니오 (<code>false</code>)</td>
-    <td>불린. <code>true</code>로 설정된다면, 특정 메타데이터의 <code>name</code>이 마켓플레이스와 다른 생태계 프로젝트가 사용하는 필터에 나타납니다.
-</td>
-  </tr>
-  </tbody>
-</table>
-
-페이로드 예시:
-```json title="Metadata Schema sample"
-{
-  "metadata": [
-    {
-      "name": "some-metadata-name",
-      "type": "discrete",
-      "filterable": true
-    },
-    {
-      "name": "rare",
-      "type": "boolean",
-      "filterable": true
-    },
-    {
-      "name": "image_url"
-    }
-  ]
-}
-```
-**[자산 메타데이터에 관해 더 알아보기](../asset-management/asset-metadata.mdx)**
-
-:::info 예시 코드 보기
-저장소 [imx-examples](https://github.com/immutable/imx-examples) 에서는 사용하기 간편한 예시를 제공합니다. 시작하려면 README에 있는 안내를 따르십시오.
+:::note 링크 레퍼런스 도구
+**[링크 레퍼런스 도구](https://tools.immutable.com/link-reference/)**를 확인해 `Link` 메서드가 어떻게 어떤 코드도 작성하지 않고 작동하는지 알아보십시오.
 :::
 
-## 메타데이터 스키마 편집
-원본 요청에 제출되지 않았던 컬렉션의 메타데이터 스키마에 빠진 속성을 추가하려면, [이 호출을 여러 번 실행](https://github.com/immutable/imx-examples/blob/main/src/admin/update-metadata-by-name.ts)할 수 있습니다. 빠진 속성을 추가하면 첨부됩니다.
+링크 UI와 함께 사용되는 **SDK v1.3.30 이상**은 다양한 방식으로 ETH과 USDC, GODS, IMX 토큰 등 화이트리스트 처리된 ERC20 토큰의 입금을 지원합니다. :::info Currency support  
+Right now, ImmutableX _only_ supports ETH and whitelisted ERC20 tokens.
+:::
 
-동일한 메타데이터 스키마 속성을 제출하는 것은 오류를 야기할 수 있습니다.
+ImmutableX is not prescriptive in how marketplaces handle the deposit process. 사용자의 입금 과정에 영향을 미치기 위해 마켓플레이스에 사용할 수 있는 선택적인 매개 변수가 몇 가지 있습니다.
 
-```json title="Error that happens when submitting the same metadata schema"
+이용 가능한 매개 변수:
+
+```typescript
 {
-  "code": "metadata_key_already_exists",
-  "message": "Metadata key(s) already exist"
+  type: ETH,
+  amount?: PositiveNumberStringC
+}
+
+{
+  amount: PositiveNumberStringC
+}
+
+{
+  type: ERC20,
+  tokenAddress: EthAddress,
+  symbol: string,
+  amount?: PositiveNumberStringC
 }
 ```
 
-:::success Refresh metadata
-In order to update asset metadata values based on the changes that you've made, you can [request a metadata refresh.](/docs/asset-metadata-refreshes) You will need to identify the tokens that need to be re-crawled, and the updates that have been made to them (via the [Metadata API](/docs/minting-on-immutable-x#metadata-api)).
+## 사용 방법
 
-We aim to process requests within 2 business days (AEST) but this can take longer depending on demand.
-:::
+마켓플레이스가 오직 금액만을 제공하거나, 금액과 함께 ETH 유형을 제공한다면 시스템은 ETH로 입금합니다. 이것은 마켓플레이스가 ETH로만 입금을 허용하기를 원하거나 마켓플레이스 자체 브랜딩을 위해 입금 양식을 꾸미고 싶어할 때 사용될 수 있습니다.
 
-## 기타 속성
-메타데이터 스키마 속성의 '필터링할 수 있는' 속성을 업데이트할 수 있습니다.
+```typescript
+link.deposit({
+  amount: '0.1',
+})
 
-**'filterable'의 값비싼 API 호출:true** 이 API 호출은 최신 필터링 값을 얻기 위해 {{contract-address}}의 모든 자산 재스캔을 트리거하므로 수초에서 수분이 소요될 수 있습니다.
+// or
 
-메타데이터 스키마 속성의 '유형' 속성 또한 편집할 수 있습니다.
+link.deposit({
+  type: 'ETH',
+  amount: '0.1',
+})
+```
 
-**필터링할 수 있는 텍스트는 허용되지 않습니다** "filterable": true 및 "type": "text"를 모두 전달하면, 이 API는 오류를 반환합니다. 이 오류는 "filterable":true를 전달하고 메타데이터 "type"이 이미 "text"인 경우에도 트리거됩니다.
+![ETH 금액 입금](/img/link-deposit/deposit-eth-amount.png "ETH 금액 입금")
+
+마켓플레이스가 토큰 정보와 금액을 제공하면, 사용자는 입금을 확정할 것을 요청받습니다. 이것은 사용자에게 '1GODS 토큰 입금'과 같은 단축키를 제공하거나, 마켓플레이스가 브랜딩 목적으로 입금 양식을 꾸미고 싶을 때 사용할 수 있습니다.
+
+```typescript
+link.deposit({
+  amount: '10',
+  type: 'ERC20',
+  symbol: 'USDC',
+  tokenAddress: '0x07865c6e87b9f70255377e024ace6630c1eaa37f',
+})
+```
+
+![USDC 금액 입금](/img/link-deposit/deposit-usdc-amount.png "USDC 금액 입금")
+
+마켓플레스가 토큰 정보만을 제공하는 경우, 사용자는 금액을 제공하고 입금을 확정할 것을 요청받습니다. 이것은 사용자에게 'GODS 입금'과 같은 단축키를 제공하거나, 다시 말하지만, 양식에 브랜드 전용 스타일을 추가하고 싶을 때 사용될 수 있습니다.
+
+```typescript
+link.deposit({
+  type: 'ERC20',
+  symbol: 'GODS',
+  tokenAddress: '0x4c04c39fb6d2b356ae8b06c47843576e32a1963e',
+})
+```
+
+![지정된 토큰 입금](/img/link-deposit/deposit-token-provided.png "지정된 토큰 입금")
+
+마켓플레이스에서 어떤 매개 변수도 제공하지 않는 경우, 사용자는 입금을 확정하기 전 통화와 금액을 선택할 것을 요청받습니다. 이것은 마켓플레이스가 이뮤터블이 브랜딩하는 통화와 양식에 의존하는 것을 선호하는 경우에 사용될 수 있습니다.
+
+```typescript
+link.deposit()
+```
+
+![매개 변수 없이 입금](/img/link-deposit/deposit-without-params.png "매개 변수 없이 입금")
+
+## 오류
+
+오류 응답은 [여기](./link-errors.md#deposits)를 확인하십시오.
