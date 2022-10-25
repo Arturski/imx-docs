@@ -1,90 +1,44 @@
 ---
-id: "sdk-api"
-title: "Link SDK"
-slug: "/sdk-api"
+id: "link-easy-login"
+title: "Link Easy Login"
+slug: "/link-easy-login"
+excerpt: "IMX SDK가 Magic.link를 통해 간편한 로그인을 지원합니다"
+sidebar_position: 13
 keywords:
   - imx-wallets
 ---
 
-:::note 링크 레퍼런스 도구
-**[링크 레퍼런스 도구](https://tools.immutable.com/link-reference/)**를 확인해 `Link` 메서드가 어떻게 어떤 코드도 작성하지 않고 작동하는지 알아보십시오.
+IMX SDK는 [Magic.link](https://magic.link/)를 통해 간편한 로그인 및 지갑 관리 기능을 지원합니다. 이를 통해 사용자는 수동 지갑 생성 및 추가적인 비밀번호 관리 없이 이메일을 통해 손쉽게 지갑을 생성하고 로그인할 수 있습니다.
+
+:::caution
+이 기능은 **오직** 링크 UI를 사용하는 파트너들을 위해서만 지원됩니다.\n이 기능은 **SDK v1.3.8 이상**에서 사용할 수 있습니다.
 :::
 
-For context, read our [overview of the ImmutableX SDK](../integrate-your-application/immutable-x-sdk.md).
 
-## 링크 사용법
+## 손쉬운 로그인 가입
 
-링크 SDK는 프론트엔드, 사용자 대면 상호작용에 사용됩니다.
+링크의 손쉬운 로그인 기능의 덕분에 사용자들이 지갑을 생성하기 위해 해야 할 일은 이메일 주소를 제공하는 것뿐입니다. 이메일 주소를 제공하면 사용자에게 이메일을 확인하라는 화면이 나타납니다.
 
-```typescript
-import { Link, ETHTokenType } from '@imtbl/imx-sdk'
+![magic_link](/img/link-setup/magic_link.png "magic_link")
 
-async function sdkExample() {
-  const link = new Link('https://link.sandbox.x.immutable.com')
+사용자들은 다음과 유사한 이메일을 받게 됩니다.
 
-  // Register user, you can persist address to local storage etc.
-  const { address } = await link.setup({})
-  localStorage.setItem('address', address)
+![손쉬운 로그인 가입](/img/link-easy-login/easy-login-signin.png "손쉬운 로그인 가입")
 
-  // Deposit ETH into IMX
-  link.deposit({
-    type: ETHTokenType.ETH,
-    amount: '0.01',
-  })
+확인 시 사용자가 해당 이메일로 로그인한 것이 처음이었다면 새 지갑이 즉시 만들어지거나, 사용자가 이미 생성된 지갑으로 인증받게 됩니다.
 
-  // View transaction history
-  link.history({})
+:::참고
 
-  // Create a sell order for token id 123 for 0.01 ETH
-  link.sell({
-    amount: '0.01',
-    tokenId: '123',
-    tokenAddress: '0x2ca7e3fa937cae708c32bc2713c20740f3c4fc3b',
-  })
+인증이 완료되면 사용자의 세션은 7일간 유지됩니다. 이 기간 동안에는 캐시가 삭제되었거나 다른 장치로 액세스하는 것이 아닌 한 사용자에게 다시 이메일 주소를 확인하라는 창이 나타나지 않습니다.
 
-  // Cancel a sell order
-  link.cancel({
-    orderId: '1',
-  })
+:::
 
-  // Create a buy flow:
-  link.buy({
-    orderIds: ['1', '2', '3'],
-  })
+:::유용한 팁
 
-  // Prepare withdrawal, you will need to wait some time before completing the withdrawal
-  link.prepareWithdrawal({
-    type: ETHTokenType.ETH,
-    amount: '0.01',
-  })
+각각의 이메일 주소는 다른 지갑 주소를 생성합니다. 문제가 발생하지 않도록 항상 동일한 이메일 주소를 사용해 로그인해 주십시오.
 
-  // Complete withdrawal
-  link.completeWithdrawal({
-    type: ETHTokenType.ETH,
-  })
-}
-```
+:::
 
-## API 클라이언트 사용법
+## 구성 및 설정
 
-API 클라이언트는 REST 메서드로의 직접 매핑으로 여기(https://docs.x.immutable.com/reference)에 문서로 작성되어 있습니다.
-
-```typescript
-import { ImmutableXClient } from '@imtbl/imx-sdk'
-
-async function libExample() {
-  const client = await ImmutableXClient.build({
-    publicApiUrl: 'https://api.sandbox.x.immutable.com/v1',
-  })
-  const address = localStorage.getItem('address')
-
-  if (address) {
-    const balances = await client.getBalances({ user: address })
-    const orders = await client.getOrders()
-    const order = await client.getOrder({ orderId: 1 })
-    const assets = await client.getAssets({
-      user: address,
-    })
-  }
-}
-```
+Magic Easy Login 프롬프트와 공급자 구성을 표시하는 다른 옵션에 대한 자세한 정보를 알고 싶다면 [링크 설정](./link-setup.md)을 참조해 주십시오.
