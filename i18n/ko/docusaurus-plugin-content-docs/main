@@ -1,40 +1,241 @@
 ---
-id: "link-iframe-support"
-title: "Link iFrame Support"
-slug: "/link-iframe-support"
-sidebar_position: 3
+id: 'introduction-smart-contracts'
+title: 'Smart contracts'
+slug: '/introduction-smart-contracts'
+excerpt: '스마트 컨트랙트 소개'
+sidebar_position: 4
 keywords:
-  - imx-wallets
+  - imx-dx
 ---
 
-## iframe 내부에서 링크 트리거하는 법
+스마트 컨트랙트 개발이 처음이라면, 여기서부터 시작하십시오. We have smart contract templates on GitHub and this article covers the basics, as well as smart contract requirements for integrating with ImmutableX.
 
-링크는 iframe 임베딩을 지원합니다.
+If you are planning to mint assets or launch a collection of NFTs on ImmutableX Marketplace, you need a smart contract. 마켓플레이스나 블록 익스플로러를 구축하는 데는 스마트 컨트랙트가 필요하지 않습니다.
 
-링크를 구축할 때 간단히 추가적인 옵션 객체를 지원하십시오.
+# 기본 내용
 
-```typescript
-type IframePositionKeys = 'left' | 'right' | 'top' | 'bottom'
+스마트 컨트랙트는 간단히 이더리움 블록체인에서 실행되는 프로그램입니다. 스마트 컨트랙트는 블록체인의 특정 주소에 있는 코드(_함수_)와 데이터(_상태_)의 집합입니다. 이것은 iOS나 안드로이드에서 실행되는 모바일 애플리케이션과 유사합니다. 하지만 스마트폰에 있는 대부분의 앱과는 달리, 스마트 컨트랙트는 이더스캔(etherscan)과 같은 블록 익스플로러에서 쉽게 찾아볼 수 있는 주소를 갖고 있습니다.
 
-type IframePositionOptions = {
-  [key in IframePositionKeys]?: string
+현재 이더리움에서 스마트 컨트랙트를 작성하는데 가장 대중적인 언어는 [이더리움 재단](https://ethereum.org/en/)에서 만든 솔리디티(Solidity)입니다. 자바스크립트, C++, 파이썬, 또는 기타 객체 지향 스크립트 언어를 사용해본 경험이 있다면, 솔리디티도 충분히 쉽게 이해할 수 있을 것입니다.
+
+다음은 주석이 달린 Hello World의 스마트 컨트랙트 예시입니다.
+
+```solidity title="HelloWorld.sol"
+// Specifies the version of Solidity, using semantic versioning.
+// Learn more: https://solidity.readthedocs.io/en/v0.5.10/layout-of-source-files.html#pragma
+pragma solidity ^0.5.10;
+​
+// Defines a contract named `HelloWorld`.
+// A contract is a collection of functions and data (its state).
+// Once deployed, a contract resides at a specific address on the Ethereum blockchain.
+// Learn more: https://solidity.readthedocs.io/en/v0.5.10/structure-of-a-contract.html
+contract HelloWorld {
+​
+    // Declares a state variable `message` of type `string`.
+    // State variables are variables whose values are permanently stored in contract storage.
+    // The keyword `public` makes variables accessible from outside a contract
+    // and creates a function that other contracts or clients can call to access the value.
+    string public message;
+​
+    // Similar to many class-based object-oriented languages, a constructor is
+    // a special function that is only executed upon contract creation.
+    // Constructors are used to initialize the contract's data.
+    // Learn more: https://solidity.readthedocs.io/en/v0.5.10/contracts.html#constructors
+    constructor(string memory initMessage) public {
+        // Accepts a string argument `initMessage` and sets the value
+        // into the contract's `message` storage variable).
+        message = initMessage;
+    }
+​
+    // A public function that accepts a string argument
+    // and updates the `message` storage variable.
+    function update(string memory newMessage) public {
+        message = newMessage;
+    }
 }
 
-type IframeSizeOptions = {
-  width: number
-  height: number
-}
-
-type ConfigurableIframeOptions = null | {
-  position?: IframePositionOptions
-  className?: string
-  containerElement?: HTMLElement
-  protectAgainstGlobalStyleBleed?: boolean
-}
-const linkIframeOptions: ConfigurableIframeOptions = { className: 'my-link-iframe' }
-const link = new Link('https://link.dev.x.immutable.com', linkIframeOptions)
 ```
 
-### 3rd party cookie-blocking policy
+## ERC-721 표준
 
-Link use browser's localStorage, which is unavailable when running inside an iFrame if the user blocks 3rd party cookies. When this occurs, on every method called on Link it will be rejected with the error `Code 1004 - There is no storage available. This is usually related to a 3rd party cookie-blocking policy.`. For more information refer to the error responses [here](./link-errors.md#general-errors).
+이 페이지의 정보는 일반적으로 [대체 불가능한 토큰](./core-concepts.md#non-fungible-tokens)(NFT)로 알려진 ERC-721 토큰용 스마트 컨트랙트 전용입니다. NFT를 사용하면 모든 임의 데이터에 대한 소유권을 토큰화하고 블록체인에서 고유한 디지털 자산을 나타낼 수 있습니다. ERC-721 표준은 예상된 결과를 도출하기 위해 이더리움 네트워크에서 모든 토큰이 준수할 수 있는 일반 규칙의 집합을 서술합니다.
+
+[토큰 표준](./core-concepts.md#token-standards)은 주로 토큰에 대한 다음의 특징을 규정합니다.
+
+- 소유권은 어떻게 결정되는가?
+- 토큰이 어떻게 생성되는가?
+- 토큰이 어떻게 전송되는가?
+- 토큰이 어떻게 소각되는가?
+
+ERC-721 표준은 사용자의 NFT 컨트랙트가 함수를 상속하거나 사용자 지정 구현을 위해 오버라이딩할 수 있는 인터페이스로 제공됩니다.
+
+아래에서는 아주 단순한 NFT를 정의하였습니다. 생성자는 컨트랙트 이름을 ** Doggo**로, 토큰 심볼을 **DOG**로 초기 설정합니다. 이것은 _아주_ 기본적이지만 [OpenZeppelin](https://docs.openzeppelin.com/openzeppelin/)에서 제공된 ERC-721 기본 컨트랙트에서 함수를 상속받은 완벽하게 유효한 NFT입니다.
+
+```solidity title="Doggo.sol"
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+​
+contract Doggo is ERC721 {
+  constructor() public ERC721("Doggo", "DOG") {}
+}
+
+```
+
+## 메타데이터
+
+이제 NFT를 만들었으므로 NFT에 설정하고 싶은 속성 또는 특정을 나타내는 온체인 메타데이터를 정의하고 스마트 컨트랙트 자체 내부에 저장할 수 있습니다.
+
+```solidity title="MyNFT.sol"
+contract MyNFT is ERC721 {
+  mapping(uint256 => string) public idToName;
+​
+  function setName(uint256 tokenId, string _name) public {
+    idToName[tokenId] = _name
+  }
+}
+```
+
+`idToName` 매핑은 온체인에 저장되며 누구든 스마트 컨트랙트에서 읽을 수 있습니다. 온체인 메타데이터 속성은 공개 기능을 통해 이렇게 설정될 수 있으며, 이는 어떤 토큰명이라도 `setName` 함수를 호출하는 트랜잭션을 전송하는 사람들에 의해 변경될 수 있다는 것을 의미합니다.
+
+NFT를 변경하는 방식을 노출하지 않는다면 NFT의 불변 속성을 설정할 수 있습니다. 예를 들어 민팅 시점에 이름을 설정하는 식으로 말입니다. 하지만 블록체인에 데이터를 저장하는 것과 관련된 비용이 있습니다. 위의 예시에서 나온 `setName`처럼 블록체인에 쓰기를 하는 것과 관련된 작업은 트랜잭션의 송신자에게 상대적으로 많은 비용을 요구합니다.
+
+온체인 VS 오프체인 메타테이터와 데이터 저장에 관해서는 이뮤터블의 [민팅 가이드](../guides/minting-on-immutable-x.md#on-chain-versus-off-chain)를 더 읽어 보십시오.
+
+# 통합 요건
+
+A crucial part of building on ImmutableX is having a Layer 1 (L1) Ethereum smart contract, which is required for minting assets that can be withdrawn from ImmutableX on Layer 2 (L2).
+
+For a smart contract to work with ImmutableX, we need an implementation of a `mintFor` function, which is what our STARK contract calls at the time of withdrawing a minted token from L2 to L1. StarkEx is the L2 scalability solution used by ImmutableX.
+
+**[StarkEx 서비스의 고급 개요 읽기](https://docs.starkware.co/starkex-v3/overview)**
+
+민팅된 토큰은 L1 리프리젠테이션, 토큰 ID, 이뮤터블 메타데이터를 갖게 되지만, L2에서 민팅하는 시점에 스마트 컨트랙트 상호작용은 일어나지 않습니다. When minting on ImmutableX, you will give us the token ID, which is the L1 token ID representing the token in your smart contract. Please note, while the token ID is typed as string, it still needs to be a valid uint256 as per the ERC-721 token standard. [각 토큰의 블루프린트](../guides/minting-on-immutable-x.md#metadata-blueprint) 또한 제공해야 합니다. 블루프린트는 (토큰 ID와 함께) `mintFor` 함수로 전달될 NFT의 불변하는 [온체인 메타데이터](../guides/minting-on-immutable-x.md#on-chain-versus-off-chain)를 나타냅니다.
+
+## 컨트랙트 예시
+
+In our smart contract templates on Github (visit [imx-contracts](https://github.com/immutable/imx-contracts)) you can find a simple implementation of an ERC-721 token with the `mintFor` function implemented correctly to work with ImmutableX.
+
+### 자산 컨트랙트
+
+이뮤터블 리포지토리의 Asset.sol 컨트랙트는 ERC-721 표준과 아래에서 자세히 설명된 사용자 지정 민팅 가능한 컨트랙트를 상속합니다.
+
+This contract implements the `_mintFor` function which is called by a function in Mintable.sol when the asset is minted to L1, mainnet Ethereum at the time of withdrawal from ImmutableX on L2.
+
+```solidity title="Asset.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+​
+import "@openzeppelin/contracts/token/ERC721/ERC721.sol";
+import "./Mintable.sol";
+​
+contract Asset is ERC721, Mintable {
+    constructor(
+        address _owner,
+        string memory _name,
+        string memory _symbol,
+        address _imx
+    ) ERC721(_name, _symbol) Mintable(_owner, _imx) {}
+​
+    function _mintFor(
+        address user,
+        uint256 id,
+        bytes memory
+    ) internal override {
+        _safeMint(user, id);
+    }
+}
+```
+
+`_mintFor` 함수에서 NFT를 [안전한 방식](https://docs.openzeppelin.com/contracts/2.x/api/token/erc721#ERC721-_safeMint-address-uint256-)으로 민팅하는 ERC-721 컨트랙트에서 상속되는 함수인 `_safeMint`를 호출합니다. 이 컨트랙트는 NFT에 그대로 사용할 수 있습니다. The name, symbol, owner, and ImmutableX contract address is passed in the constructor. :::info 솔리디티 네이밍 표준  
+함수명 또는 변수(예: `_mintFor`)는 내부 함수 또는 변수임을 나타내는 솔리디티의 네이밍 표준입니다.
+:::
+
+### 민팅 가능한 컨트랙트
+
+아래의 Mintable.sol 컨트랙트에서 자산이 소유자 및 이뮤터블 주소와 함께 생성자에서 최초 설정되는 것을 알 수 있습니다. 더 자세한 내용은 아래에서 확인하십시오.
+
+```solidity title="Mintable.sol"
+// SPDX-License-Identifier: MIT
+pragma solidity ^0.8.4;
+​
+import "@openzeppelin/contracts/access/Ownable.sol";
+import "./IMintable.sol";
+import "./utils/Minting.sol";
+​
+abstract contract Mintable is Ownable, IMintable {
+    address public imx;
+    mapping(uint256 => bytes) public blueprints;
+​
+    event AssetMinted(address to, uint256 id, bytes blueprint);
+​
+    constructor(address _owner, address _imx) {
+        imx = _imx;
+        require(_owner != address(0), "Owner must not be empty");
+        transferOwnership(_owner);
+    }
+​
+    modifier onlyIMX() {
+        require(msg.sender == imx, "Function can only be called by IMX");
+        _;
+    }
+​
+    function mintFor(
+        address user,
+        uint256 quantity,
+        bytes calldata mintingBlob
+    ) external override onlyIMX {
+        require(quantity == 1, "Mintable: invalid quantity");
+        (uint256 id, bytes memory blueprint) = Minting.split(mintingBlob);
+        _mintFor(user, id, blueprint);
+        blueprints[id] = blueprint;
+        emit AssetMinted(user, id, blueprint);
+    }
+​
+    function _mintFor(
+        address to,
+        uint256 id,
+        bytes memory blueprint
+    ) internal virtual;
+}
+```
+
+다음은 이 스마트 컨트랙트 예시에 대한 더 자세한 정보입니다.
+
+- 소유자는 사용자가 컨트랙트의 민터로 선택한 지갑 주소이므로, 아주 안전한 지갑이어야 합니다.
+- `transferOwnership(_owner)`는 설명된 것과 똑같이 작동하며, 컨트랙트의 소유권을 컨트랙트 배포자에게서 특정 지갑으로 전송합니다.
+- The imx address refers to the ImmutableX contract address that is interacting with your smart contract to perform minting operations. imx-contracts 리포지토리의 readme에서 각 환경에 대한 이 주소를 찾아볼 수 있습니다(맨 위의 표 참조). 이 주소는 트랜잭션의 송신자가 이뮤터블의 컨트랙트인지 아닌지를 확인하는 `onlyIMX` 변경자에서 사용됩니다. 이것은 이뮤터블의 컨트랙트를 화이트리스트 처리하고 사용자의 스마트 컨트랙트를 통해 다른 그 누구도 자산을 민팅할 수 없게 하는 방법입니다.
+- The `mintFor` function is called by the ImmutableX smart contract at the time of withdrawing the NFT to mainnet. 이 함수는 위에서 설명한 것처럼 `onlyIMX` 변경자를 가지고 있습니다. 고유한 NFT를 민팅하는 것이므로, 수량=1이 되도록 하십시오.
+- [블루프린트](../guides/minting-on-immutable-x.md#metadata-blueprint)는 매핑 블루프린트에서 온체인, 불변하는 메타데이터로 저장됩니다. 사용자 지정 블루프린트 디코딩의 경우, Asset.sol의 mintFor 함수를 오버라이딩하여 tokenURI와 같은 곳에 저장하거나 문자열을 서로 다른 구성요소로 분할할 수 있습니다.
+- 해당 함수는 mintFor가 성공적으로 완료되었을 때 `AssetMinted` 이벤트를 내보내며 이것은 애플리케이션에 의해 수신될 수 있습니다.
+
+## 일반 조언
+
+다음은 스마트 컨트랙트 개발과 관련된 추가적인 팁과 지침입니다.
+
+## 개발 및 테스트
+
+스마트 컨트랙트는 한 번 배포되면 불변하기 때문에 신뢰하기 좋습니다. 하지만 이것은 코드 안에 있는 버그를 처리하기가 훨씬 더 어렵다는 것을 의미하기도 합니다. 그 때문에 스마트 컨트랙트를 메인넷 이더리움에 배포하기 전 버그가 없고 예상대로 작동하는 상태로 만드는 것이 매우 중요합니다. 시장 가치가 있는 토큰을 다룰 때는 아주 작은 버그라도 엄청난 결과를 야기할 수 있습니다.
+
+일반적인 조언은 스마트 컨트랙트를 간단하게 유지하고 OpenZeppelin과 같은 오픈 소스 라이브러리를 이용하라는 것입니다. 이러한 컨트랙트는 많은 테스트를 거쳤기 때문에 버그가 발생할 확률이 적습니다. 하지만 여전히 100% 보장할 수는 없습니다.
+
+### 도구 및 테스트 환경
+[Remix IDE](https://remix.ethereum.org/)와 같은 도구를 사용해 빠르게 코드를 실험 및 반복하고 [Ganache](https://trufflesuite.com/ganache/)와 같은 로컬 블록체인을 사용해 로컬 테스트 환경을 설정할 수 있습니다. There’s also Ethereum testnets like Goerli, Sepolia, etc. to use as staging environments, allowing you to test contract deployment and make sure everything works as intended.
+
+The ImmutableX test environment uses Goerli, so you should be deploying your contract there first to integrate and play around with the functions on-chain, and test the integration with ImmutableX. It’s also important to write unit tests and integration tests for your smart contracts. 이뮤터블은 [GitHub에 단위 테스트 예시](https://github.com/immutable/imx-contracts/blob/main/test/Asset.test.ts)를 일부 보유하고 있어 이것이 어떤 형태인지 알 수 있습니다.
+
+## 가스비 및 메타데이터
+
+블록체인 플랫폼에서 트랜잭션을 성공적으로 수행하거나 스마트 컨트랙트를 실행하려면 가스비가 필요합니다. 가스비는 사용되는 가스에 가스 가격을 곱해 결정됩니다. While ImmutableX is completely gas free within the L2 ecosystem, it’s still useful to know about the implications of fees for smart contract development.
+
+블록체인에서 데이터를 읽어 오는 것은 트랜잭션에서 실행되는 것이 아닌 한 무료입니다. 하지만 블록체인에 데이터를 작성하는 데는 가스비가 들고 그 비용은 상당히 비쌀 수 있습니다. 특히 토큰을 민팅할 때는 토큰에 대한 모든 정보가 블록체인에 기록되되고 네트워크 전역의 노드에서 인증되기에 더욱 비용이 높습니다. 이것이 바로 특정 NFT를 L1에서 민팅할 때 가스비가 아주 높은 이유입니다.
+
+따라서 코드는 블록체인에 대한 더 적은 수의 작동과 쓰기를 사용해 보안을 손상시키지 않으면서 가능한 한 효율적이어야 합니다. 가능하다면 민팅 과정에서 필요한 대부분의 연산은 오프체인으로 이동되어야 합니다. While minting on ImmutableX is gas-free, withdrawing the token to mainnet will incur a gas fee which has to be paid by the user to mint the token.
+
+### 사용 사례
+
+[Gods Unchained](https://godsunchained.com/)(GU)를 예시로 살펴봅시다.
+
+GU 카드는 블루프린트의 프로토(카드 ID)와 품질만을 전달하여 온체인에 저장하며, 이 두 속성은 홀로 고유하게 카드의 값을 결정할 수 있습니다. 공격, 방어, image_url 등 카드의 다른 속성은 모두 ([메타데이터 API 엔드 포인트](https://docs.x.immutable.com/docs/minting-on-immutable-x#metadata-api)를 통해 액세스되는) 오프체인 메타데이터에 저장됩니다. This makes it cheaper for a user (player) to withdraw a card from ImmutableX as they are writing less data to the blockchain.
+
+별도로 호스팅되는 (오프체인) 엔드 포인트에 메타데이터를 보유하는 것은 갓즈 언체인드 엔지니어링 팀이 밸런스 패치의 일환으로 특정 카드의 공격력을 증가시키는 등의 변경 사항을 만드는 데 유용합니다.
+
+오프체인 메타데이터 값은 [메타데이터 새로 고침 요청](/docs/asset-metadata-refreshes)으로 업데이트할 수 있습니다.
