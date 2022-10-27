@@ -1,60 +1,56 @@
 ---
-id: "api-changelog"
-title: "API changelog"
-slug: "/api-changelog"
-sidebar_position: 2
+id: "architecture-overview"
+title: "Architecture overview"
+slug: "/architecture-overview"
+excerpt: "The core components of ImmutableX"
+sidebar_position: 5
+keywords:
+  - imx-dx
 ---
 
-# API 변경 로그
+The ImmutableX stack consists primarily of: the ZK-Rollup scaling engine, Link UI, and the APIs. 이 구성 요소들은 모두 함께 개발자들과 사용자들을 위한 NFT 공간의 진입 장벽을 낮추어 사용자의 관리권을 해지지 않으면서 즉각적인 거래 확인, 대량 확장성, 가스비 없는 민팅 및 거래를 가능하게 해줍니다.
 
-이 페이지에서는 다음에 관한 정보를 제공합니다.
-* [호환성이 손상된 변경(breaking changes)](#upcoming-breaking-changes)
-* [변경 로그(breaking and non-breaking changes)](#changelog)
+There are three distinctions to make when referring to ImmutableX:
+- **ImmutableX platform** is the core infrastructure that allows for the minting, depositing, withdrawing and trading of assets on Layer 2 blockchain.
+- **ImmutableX token** (IMX) is the ERC-20 utility token of the ImmutableX protocol, used to reward users for their contribution to the platform.
+- **ImmutableX marketplace** is the first exchange venue for gas-free minting and trading of NFTs, developed by Immutable and powered by ImmutableX.
 
+## ImmutableX APIs
+레이어 1 블록체인에는 API가 없어 추적을 요하는 모든 요소는 개별적으로 추적된 후 사용자의 기록에 기록 및 저장됩니다. The ImmutableX APIs wrap the logic of ImmutableX’s exchange engine so that developers do not need to interact directly with smart contracts via custom logic to build on the ImmutableX platform.
 
-현재 이뮤터블은 리소스 버저닝(URI 기반) 즉 `/v1/<endpoint>`을 사용합니다. 호환성이 손상되는 변경([하위 호환 가능한 변경(backwards compatible changes)](#backwards-compatible-changes-non-breaking)이 아닌 변경)이 버저닝되는 것을 목표로 하고 있으나, 기존 엔드 포인트에 호환성이 손상되는 변경을 도입할 필요가 있을 때가 있습니다. 이러한 변경은 사전에 알려드리며 이에 관한 정보 또한 이 페이지에서 찾아볼 수 있게 만들 예정입니다.
+민팅부터 거래, 전송에 이르기까지, 각 상호 작용은 단순한 API 호출을 통해 수행됩니다. The ImmutableX APIs contain both the read and write functionality required to build applications without building a backend, meaning ImmutableX abstracts the complexity of the blockchain to function as a backend.
 
-#### 하위 호환 가능한 변경(non-breaking):
-* 새 API 리소스 추가하기.
-* 기존 API 메서드에 새로운 선택 요청 매개 변수 추가하기.
-* 기존 API 응답에 새 속성 추가하기.
-* 기존 API 응답의 속성 순서 변경하기.
-* 객체 ID, 오류 메시지, 기타 사람이 읽을 수 있는 문자열과 같은 불투명 문자열의 길이 또는 형식을 변경. 여기에는 고정 접두사의 추가 또는 제거가 포함됩니다.
+또한 읽기 함수는 다양한 필터링 옵션을 제공합니다. 여기에는 특정 사용자가 제출한 모든 오더의 목록을 보여줄 수 있는 필터링 또는 메타테이터 필터링과 같은 더욱 완전한 필터링이 포함됩니다. API의 읽기 함수를 사용하면 개발자에게 다음의 목록을 제공할 수 있습니다.
 
-## 호환성이 손상된 변경(breaking changes)
+- 민팅
+- 거래
+- 인출 & 입금
+- 민팅된 자산
+- 오더(예:만들어진 모든 오더 표시)
 
-<table>
-  <tbody>
-    <tr>
-      <th>예정된 변경 날짜</th>
-      <th>변경 내용 설명</th>
-    </tr>
-    <tr>
-      <td></td>
-      <td></td>
-    </tr>
-  </tbody>
-</table>
+**[API 레퍼런스 문서 보기](/reference)**
 
-## 변경 로그
+## ZK-Rollup
+ImmutableX combines NFT-specific exchange and proof logic with the cutting edge rollup technology developed by StarkWare to create one of the most advanced tools for trading NFTs ever built. 롤업 기술은 이더리움의 보안을 기본으로 보유하면서 전 세계적 수준의 확장성과 사용자 경험을 가능하게 해줍니다.
 
-<table>
-  <tbody>
-    <tr>
-      <th>날짜</th>
-      <th>호환성이 유지되는 변경</th>
-      <th>호환성이 손상된 변경</th>
-    </tr>
-    <tr>
-      <td></td>
-      <td>
-        <ul>
-        </ul>
-      </td>
-      <td>
-        <ul>
-        </ul>
-      </td>
-    </tr>
-  </tbody>
-</table>
+ZK-STARK(영지식 확장 가능한 투명한 지식 인수, Zero-Knowledge Scalable Transparent ARguments of Knowledge)는 사용자들이 공개적으로 인증할 수 있는 방식으로 제3자에게 데이터나 계산을 노출하지 않으면서 제3자에게 인증된 데이터를 공유하거나 연산을 수행할 수 있게 해주는 암호 화폐 증명 기술의 한 유형입니다. 이것은 영지식 증명(Zero-Knowledge Proof, ZKP)라고도 알려져 있습니다.
+
+ZK-STARK의 생성 전에는 ZK 증명 시스템 생성에 ZK-SNARK가 사용되었습니다. ZK-SNARK는 처음에 ZK 증명 시스템을 설정하기 위해 믿을 수 있는 당사자, 또는 당사자들을 필요로 했는데, 이는 취약성을 초래하였습니다. 그 '믿을 수 있는 당사자들'이 전체 시스템의 기밀성을 망가뜨릴 수 있기 때문이었습니다. ZK-STARK는 믿을 수 있는 설정의 필요성을 제거하여 이 기술을 개선하였습니다.
+
+ZK-롤업은 '운영자'를 필요로 합니다. 운영자는 트랜잭션의 선형화에 책임이 있는데, 이는 트랜잭션을 격차 없이 일관성 있는 전반적인 증가 순서대로 배열한다는 것을 의미합니다. In this instance ImmutableX is the operator.
+
+ImmutableX’s rollup technology allows for more than 9,000 NFT transfers, trades and mints per second, meeting and exceeding the scale required by mainstream NFT projects.
+
+더 자세한 내용은 [Vitalik의 불완전한 롤업 가이드](https://vitalik.ca/general/2021/01/05/rollup.html)를 확인하십시오.
+
+## Link UI
+The Link is the conduit that we use to connect users to the ImmutableX protocol. This allows ImmutableX to support a thriving third-party marketplace ecosystem, without presenting a security risk.
+
+Unlike other blockchains or sidechains, ImmutableX currently supports all desktop Ethereum wallets without forcing the user to switch networks. All new ImmutableX users are required to [register as a user](../guides/getting-started-guide.md#register-a-user-account), which means setting up a Layer 2 wallet via Link.
+
+ImmutableX partners can embed the Link directly into their site’s transaction flow, making buying and selling NFTs more efficient and intuitive. 링크 화면은 해당 사이트의 트랜잭션 플로우에 나타나 사이트 사용자들에게 구매, 상장, ETH와 NFT의 전송을 페이지를 벗어나지 않고 실행할 수 있게 해줍니다.
+
+**[링크 SDK 더 알아보기](../guides/link-sdk/index.md)**
+
+## ImmutableX SDK
+The ImmutableX SDK, combined with the APIs, will allow partners to build NFT projects in hours rather than weeks. Currently, a TypeScript SDK implementation is available, designed to make it easy to integrate the protocol into websites.
