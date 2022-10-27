@@ -1,146 +1,61 @@
 ---
-id: "link-setup"
-title: "Link.setup"
-slug: "/link-setup"
-sidebar_position: 1
+id: "link-crypto-to-fiat"
+title: "Link.cryptoToFiat"
+slug: "/link-crypto-to-fiat"
+sidebar_position: 12
 keywords:
   - imx-wallets
 ---
 
-:::note 링크 레퍼런스 도구
-**[링크 레퍼런스 도구](https://tools.immutable.com/link-reference/)**를 확인해 `Link` 메서드가 어떻게 어떤 코드도 작성하지 않고 작동하는지 알아보십시오.
+The crypto to fiat functionality is available in SDK v1.21.3+ and is a collaboration between ImmutableX and Moonpay.
+
+The exchange process allows users to sell crypto held on L2 on the ImmutableX platform directly for fiat funds. 이 금액은 사용자가 지정한 은행 계좌로 바로 입금됩니다. 이 환전에는 가스비가 들지 않으며 [Moonpay 거래 수수료](https://support.moonpay.com/hc/en-gb/articles/360011930117-What-fees-do-you-charge-)만 부과됩니다.
+
+인출은 Moonpay 계정으로의 전송을 통해 L2에서 직접 이루어집니다.
+
+:::info 최소 인출 금액
+최소 인출 금액은 0.015ETH입니다.
 :::
 
-A user's web3 wallet (e.g. Metamask) is used to create, connect, and sign transactions on ImmutableX. Before a user can do this, they need to be registered on Immutable and signed into their wallet. 이 두 단계는 모두 단일 호출 `Linksetup`으로 완료될 수 있습니다. 사용자가 이미 등록한 경우, 이 기능은 로그인을 위해 호출될 수 있습니다.
+현재 이용 가능한 암호 화폐는 다음과 같습니다.
+- ETH
 
-## 지원하는 지갑
 
-링크에서 지원되는 지갑은 다음과 같습니다.
-- Metamask
-- Magic Link
-- Gamestop Wallet
+:::caution 지원 국가
 
-## 매개 변수
+암호화폐에서 명목화폐로의 환전은 EU, 영국, 엄선된 미국의 일부 주에서만 가능합니다.
 
-```typescript
-// Use the default Link.setup params (providerPreference is "metamask")
-link.setup({})
-
-// Specify the provider preference
-link.setup({providerPreference: ProviderPreference})
-
-enum ProviderPreference {
-    GAMESTOP = 'gamestop',
-    METAMASK = 'metamask',
-    MAGIC_LINK = 'magic_link',
-    NONE = 'none',
-}
-
-```
-
-:::info 게임스탑 지갑
-**게임스탑 지갑**은 SDK v1.22.0에서 이용할 수 있습니다.
-
-**게임스탑 지갑**은 최소 0.6.0버전이어야 합니다.
+더 많은 정보를 알고 싶다면 [Moonpay의 업무 지원 센터](https://support.moonpay.com/hc/en-gb/articles/4406268234641-What-countries-are-supported-to-sell-crypto-with-MoonPay-)를 참조하십시오.
 :::
 
-## 사용 방법
-
-```typescript
-// Sample link.setup call using the default provider:
-const setupResponsePayload: SetupResultsCodec = await link.setup({})
-
-// Using none as option (list all available options including Magic):
-const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "none" })
-
-// Specifying a provider:
-const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "magic_link" })
-```
-
-`Link.setup` returns the user's signed-in address and STARK public key if the setup or sign in was completed successfully.
-
-```typescript
-const SetupResultsCodec = t.intersection([
-  t.type({
-    address: EthAddress,
-    starkPublicKey: HexadecimalString,
-    ethNetwork: t.string,
-    providerPreference: t.string,
-  }),
-  t.partial({
-    email: t.string,
-  }),
-]);
-
-// Sample response block
-// ie. await link.setup({})
-result = {
-    "address": "0x...",
-    "starkPublicKey": "0x...",
-    "providerPreference": null,
-    "ethNetwork": "goerli"
-}
-
-// `email` field is returned in the response if the magic_link provider is requested
-// ie. await link.setup({ providerPreference: "magic_link" })
-{
-    "address": "0x...",
-    "starkPublicKey": "0x...",
-    "providerPreference": "magic_link",
-    "ethNetwork": "goerli",
-    "email": "name@domain.com"
-}
-```
-
-### 가능한 모든 옵션 리스트
-```typescript
-// Using none as option (list all available options including Magic):
-const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "none" })
-```
-![없음](/img/link-setup/none.png "없음")
-
-# 다양한 공급자에 기반한 UI
-
-### 메타마스크(기본)
-```typescript
-// Sample link.setup call using the default provider:
-const setupResponsePayload: SetupResultsCodec = await link.setup({})
-```
-![기본/메타마스크](/img/link-setup/default-metamask.png "기본/메타마스크")
-
-### 매직 링크
-```typescript
-// Specifying Magic as provider:
-const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "magic_link" })
-```
-![매직_링크](/img/link-setup/magic_link.png "매직_링크")
-
-
-### 게임스탑 지갑
-```typescript
-// Specifying Magic as provider:
-const setupResponsePayload: SetupResultsCodec = await link.setup({ providerPreference: "gamestop" })
-```
-
-:::caution
-게임스탑 지갑은 메인넷에서만 사용할 수 있습니다
+:::danger 환전하려면 사용자 인증이 필요합니다
+`Link.cryptoToFiat({})`은 사용자가 인증을 거친 후 로그인한 상태에서만 호출해야 하며 그렇지 않으면 사용자의 재연결을 요구합니다
 :::
 
-![게임스탑 지갑](/img/link-setup/gamestop.png "게임스탑 지갑")
+이용 가능한 통화와 금액을 선택할 수 있는 옵션을 갖는 환전 절차를 개시하려면, 마켓플레이스가 환전 기능을 호출해야 합니다.
 
-## 다중 브라우저 지갑 탐지
+```typescript
+await link.cryptoToFiat({})
+```
 
-:::caution
-이뮤터블은 이뮤터블 플랫폼에 연결하기 위해 사용되는 다양한 지갑을 지원합니다. 한편 지갑에는 기본 지갑으로 설정하기 옵션이 있으며 이 옵션을 활성화하면 다른 지갑의 연결 시도 시 문제가 발생할 수 있습니다.
+This displays the Link UI with a screen when a user need to choose currency and enter amount:
 
-더 자세한 내용은 [이뮤터블의 다중 지갑 확장 기능 관리 방법](https://support.immutable.com/hc/en-us/articles/5160531224079-Managing-multiple-wallet-extensions-for-Immutable)을 확인하십시오.
-:::
+![매개 변수 없는 환전](/img/link-sdk-cryptotofiat/offramp-without-params.png "매개 변수 없는 환전")
 
+특정 통화의 환전 절차를 개시하려면 다음과 같이 작성합니다.
+```typescript
+await link.cryptoToFiat({ cryptoCurrencies: ['ETH'] })
+```
 
-![다중-지갑](/img/link-setup/multiple-wallets.png "다중-지갑")
+이것은 사용자가 이미 정해진 통화의 금액만을 입력해야 할 때 화면에 링크 UI를 표시합니다.
 
-사용자 지갑 등록에 대한 더 자세한 정보는 [사용자 등록](../user-registration.md) 및 [계정 관리](../integrate-your-application/account-management.md)를 확인하십시오.
+![특정 통화로 환전](/img/link-sdk-cryptotofiat/offramp-with-currency.png "특정 통화로 환전")
 
-## 오류
+지정된 통화와 금액으로 환전 절차를 개시하려면 다음과 같이 작성합니다.
 
-오류 응답은 [여기](./link-errors.md#general-errors)를 확인하십시오.
+```typescript
+await link.cryptoToFiat({ cryptoCurrencies: ['ETH'], amount: '0.01' })
+```
+이것은 로딩된 Moonpay 위젯과 함께 링크 UI를 표시합니다.
+
+![특정 통화 및 금액으로 환전](/img/link-sdk-cryptotofiat/offramp-with-currency-and-amount.png "특정 통화 및 금액으로 환전")
