@@ -1,184 +1,107 @@
 ---
-id: "personal-inventory"
-title: 'Personal inventory'
-slug: '/personal-inventory'
-excerpt: '계정 잔고 보기 및 자산 관리'
-sidebar_position: 3
+id: 'sdks'
+title: 'ImmutableX SDKs'
+slug: '/sdks'
+description: 'ImmutableX SDKs'
 keywords:
-  - imx-wallets
+  - imx-dx
 ---
 
-사용자의 계정을 모니터링하고 상호작용하려면 IMX 클라이언트와 링크 SDK가 모두 필요합니다. 인벤토리 요청에 타입 상수의 추가적인 임포트가 필요할 수도 있습니다.
+'@site/src/components/SdkButtonList'에서 SdkButtonList 가져오기; '@site/src/components/Article/styles.module.css'에서 articleStyles 가져오기; '@site/src/constants'에서 { coreSDKs, walletSDKs, linkSDK } 가져오기;
 
-```javascript title="Constants required for inventory requests"
-import { ERC721TokenType, ETHTokenType } from '@imtbl/imx-sdk'
-```
+# SDK 개요
 
-## ERC20 및 IMX 잔고
+이뮤터블은 애플리케이션 개발자들이 기본적인 기능뿐만 아니라 더욱 발전된 기능을 실행하는 것을 쉽게 만들어 줄 다양한 언어와 프레임워크에 SDK를 제공합니다.
 
-ImmutableX’s base token is Ethereum. 일단 플랫폼에 입금되면 토큰은 세 가지 상태로 존재합니다.
+제공되는 유형에는 세 가지가 있습니다.
+* **[Core SDK](#core-sdks)** - API 엔드 포인트에 대한 래퍼뿐만 아니라 일반 동작을 더 쉽게 구현할 수 있게 해주는 워크 플로우 기능을 제공합니다. It facilitates all the functionality that the ImmutableX platform provides.
+* **[Wallet SDK](#wallet-sdks)** - 다양한 플랫폼 상의 사용자 지갑을 연결하고 상태 업데이트 트랜잭션(즉, 오더 매도, 자산의 소유권 이전)의 사용자 승인(서명)을 가능하게 만들어 애플리케이션이 [사용자 트랜잭션](#what-are-user-transactions)을 촉진하게 만듭니다. Core SDK와 함께 사용될 수 있습니다.
+* **[Link SDK](../main/guides/link-sdk/index.md)** - 사용자들이 볼 수 있는 유저 인터페이스, 이러한 트랜잭션의 서명 및 승인을 포함해 [사용자 트랜잭션](#what-are-user-transactions)을 촉진하는 데 필요한 모든 기능을 제공합니다.
 
-- **imx** - ETH deposited on ImmutableX and is ready to be used to fill orders, trade, etc.
-- **Preparing withdrawal** - ETH that has started the withdrawal process from ImmutableX. It must wait until the next published signature to the main chain before moving to the withdrawable state.
-- **인출 가능(Withdrawable)** - 현재 메인 체인의 다른 주소로 인출 가능한 ETH.
+#### ***사용자 트랜잭션이란?***
+사용자 트랜잭션은 자산 소유자의 승인(서명)이 필요한 자산 소유권의 변경을 다루는 거래입니다. 이러한 트랜잭션은 단순히 데이터를 읽는 것과는 대조적으로, 블록체인에 있는 자산의 상태를 업데이트합니다.
 
-사용자의 잔고를 검색하려면 다음의 IMX 클라이언트 함수를 사용하십시오.
+## SDK들은 어떻게 함께 작동하나요?
 
-```javascript
-const balances = await client.getBalances({ user: address })
-```
+The **Core SDK** is responsible for the bulk of functionality that is available on the ImmutableX platform. 이것은 사용자의 승인을 요구하는 특정 트랜잭션에 서명할 수 있도록 사용자 지갑과 연결하기 위해 **Wallet SDK**와 함께 사용될 수 있습니다.
 
-_잔고_ 객체에는 세 가지 상태, 즉 imx, preparing_withdrawal, withdrawable의 금액이 모두 포함됩니다. 각각의 값은 ETH 금액을 표시하는 데 필요한 소수점 자릿수의 유지를 위해 사용되는 구조인 BigNumber로 반환됩니다. 그 값은 Wei로 표시되기 때문에 ETH로 표시하려면 변환이 필요할 수 있습니다. 1ETH = 10^18Wei.
+**Link SDK**는 사용자 트랜잭션의 대부분에 종단간 기능을 제공하며 다른 SDK와 함께 사용될 필요가 없습니다.
 
-:::info ETHER - WEI 환산
-1 Ether = 1,000,000,000,000,000,000 Wei
-:::
+### 기능 매트릭스 예시
+<table>
+    <tbody>
+        <tr>
+            <th></th>
+            <th colspan="1">사용자 지갑에 연결</th>
+            <th colspan="4">사용자 서명이 필요한 동작</th>
+            <th colspan="4">사용자 서명이 필요하지 않은 동작</th>
+        </tr>
+        <tr>
+            <th></th>
+            <th>트랙잭션 서명</th>
+            <th>사용자 등록</th>
+            <th>오더 및 거래 생성</th>
+            <th>L1-L2 전송(입금 및 인출)</th>
+            <th>L2 토큰 민팅</th>
+            <th>자산 목록 가져오기</th>
+            <th>오더 가져오기</th>
+            <th>거래 가져오기</th>
+            <th>사용자 잔고 가져오기</th>
+        </tr>
+        <tr>
+            <th>Wallet SDK</th>
+            <td>✅</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+        </tr>
+        <tr>
+            <th>Link SDK</th>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>
+            <td>❌</td>        
+        </tr>
+        <tr>
+            <th>Core SDK</th>
+            <td>❌</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+            <td>✅</td>
+        </tr>
+    </tbody>
+</table>
 
-이더 패키지를 사용하는 경우, 다음의 유틸리티 호출을 통해 WEI 값을 ETH로 지정할 수 있습니다.
+## Core SDK
+<SdkButtonList sdks={coreSDKs} />
 
-```javascript title="Wei to ETH"
-import { ethers } from 'ethers'
+## Wallet SDK
+<SdkButtonList sdks={walletSDKs} />
 
-// ...
+## Link SDK
+<SdkButtonList sdks={linkSDK} />
 
-let amountInEth = ethers.utils.formatEther(amountInWei)
-```
+## 오픈 API 사양
 
-## 입금
+이뮤터블의 오픈 API 사양은 다양한 언어에서 자동 클라이언트 생성을 지원함으로써 개발자들이 API와 효율적으로 상호 작용할 수 있는 자율권을 부여합니다.
 
-In order to deposit into ImmutableX, a user sends ETH from their wallet to the ImmutableX contract. 이 ETH는 현재 이뮤터블이 만든 레이어 2(L2) 솔루션에 있으며 이후 사용자가 인출할 때까지 컨트랙트 내에 머무릅니다. 링크 SDK 호출은 입금 과정에 손쉬운 인터페이스를 제공합니다.
-
-```javascript
-// Deposit ETH into IMX
-link.deposit({
-  type: ETHTokenType.ETH,
-  amount: '0.01',
-})
-```
-
-## 인출
-
-Withdrawing ETH from ImmutableX is a two step process. As noted before, the ETH on the mainchain technically resides in the ImmutableX contract.
-
-A signed transaction needs to be sent on the L2 (ImmutableX), preparing the ETH to be withdrawn from the contract. 인출을 준비하려면 다음의 링크 SDK 기능을 사용하십시오.
-
-```javascript
-link.prepareWithdrawal({
-  type: ETHTokenType.ETH,
-  amount: '0.01', //The amount of the token to withdraw
-})
-```
-
-:::caution Avoiding gas price complaints
-Withdrawing from ImmutableX will cost the user a gas fee, so encouraging users to wait and group their withdrawals with larger amounts is recommended to avoid gas price complaints.
-:::
-
-인출의 준비와 메인 체인(L1) 계정으로의 인출 완료 사이에는 소요되는 시간이 존재합니다. 인출 과정을 모니터링하는 간단한 방법은 사용자의 다양한 계정 잔고를 [잔고](#erc20imx-balances)에서 보이는 것처럼 모니터링하는 것입니다.
-
-ETH가 _인출 가능한_ 상태로 넘어가면 사용자는 메인 체인 트랜잭션을 생성하여 ETH를 자신의 지갑으로 인출할 수 있습니다. 해당 트랜잭션은 메인 체인으로 퍼블리싱되고 있기 때문에 이 절차에는 가스비가 요구됩니다. 인출을 완료하기 위해서는 다음의 링크 SDK 기능을 사용해 사용자에게 절차를 안내하십시오.
-
-```javascript
-link.completeWithdrawal({
-  type: ETHTokenType.ETH,
-})
-```
-
-## 트랜잭션 히스토리
-
-링크 SDK는 사용자의 히스토리를 보여주는 아주 간단한 방법을 제공합니다. 다음의 호출을 사용해 사용자의 히스토리를 팝업창에 표시하십시오.
-
-```javascript
-// View transaction history
-link.history({})
-```
-
-## 사용자 NFT 자산
-
-Displaying user assets is a common requirement for games and marketplaces using ImmutableX. The IMX Client provides a quick way to get all the user’s assets: [block:code]
-
-```javascript
-const assetsRequest = await client.getAssets({ user: address })
-```
-
-This request will retrieve all the user’s assets tracked by ImmutableX limited only by the result set page size. If a user has more assets than the current request’s page size limit (currently 100), additional requests can be made with the cursor property to navigate through all the user’s assets.
-
-```javascript
-let assetCursor
-let assets = []
-do {
-  let assetRequest = await client.getAssets({ user: address, cursor: assetCursor })
-  assets = assets.concat(assetRequest.result)
-  assetCursor = assetRequest.cursor
-} while (assetCursor)
-```
-
-이 기술은 모든 사용자의 자산을 한 번에 가져올 수 있게 해줍니다. 하지만 사용자가 보유한 자산 수량에 따라 느릴 수 있습니다. 성능을 극대화하기 위해 페이징이나 무제한 스크롤링 기법을 사용해 다른 결과를 동적으로 로딩하는 것이 가장 좋습니다.
-
-## 소유 자산 필터링
-
-대부분의 애플리케이션은 어떤 방식으로든 사용자의 자산을 필터링하고 싶어합니다. Oftentimes only one collection’s assets are needed, or maybe only the assets on ImmutableX (L2) are required to be shown. 자산 요청을 필터링하여 반환되는 데이터를 최소화하는 데는 많은 방법이 있습니다. 다음은 컬렉션과 레이어 2 자산만을 필터링하는 예시입니다.
-
-```javascript
-let assetsRequest = await client.getAssets({
-  user: address,
-  cursor: assetCursor,
-  status: 'imx',
-  collection: collectionAddress,
-})
-```
-
-사용자의 자산을 표시할 때 어떤 자산이 이미 상장되었는지를 보여줄 필요가 있을 때가 있습니다. 매도 오더를 자산과 함께 반환하려면, 요청에 _sell_orders_ 플래그를 설정하십시오. 각각의 자산에는 해당 자산에 대한 모든 오더를 명시적으로 포함하는 오더 객체가 포함되어 있습니다. 아래의 예시에서는 어떻게 _isListed_ 속성을 검색된 자산에 추가하는지를 보여줍니다.
-
-```javascript
-let assetCursor
-let assets = []
-do {
-  let assetRequest = await client.getAssets({
-    user: address,
-    cursor: assetCursor,
-    status: 'imx',
-    collection: collectionAddress,
-    sell_orders: true,
-  })
-  assets = assets.concat(assetRequest.result)
-  assetCursor = assetRequest.cursor
-} while (assetCursor)
-
-for (let asset of assets) {
-  asset.isListed = false
-  if (asset.orders?.sell_orders?.length > 0) {
-    asset.isListed = true
-  }
-}
-```
-
-## 매도 오더 생성
-
-사용자의 자산을 확보했다면, 링크 SDK를 사용해 사용자에게 자산의 판매를 안내하십시오.
-
-```javascript
-async function sellAsset(asset, priceInEth) {
-  let sellParams = {
-    amount: priceInEth,
-    tokenId: asset.id,
-    tokenAddress: asset.token_address,
-  }
-  //Throws an error if not successful
-  await link.sell(sellParams)
-}
-```
-
-## 자산 전송
-
-링크 SDK를 통해 일반적으로 사용되는 또 다른 사례인 사용자 전송을 이용할 수 있습니다. If a user wants to send a token to another ImmutableX address, an order is not required. 대신 다음의 코드를 사용하십시오.
-
-```javascript
-async function transferERC721(asset) {
-  await link.transfer({
-    type: ERC721TokenType.ERC721,
-    tokenId: asset.id,
-    tokenAddress: asset.token_address,
-    to: addressToSendTo,
-  })
-}
-```
+<a href="https://github.com/immutable/imx-core-sdk/blob/main/openapi.json">
+  <Button>
+    이뮤터블 오픈 API 사양 <RightArrowIcon className={articleStyles.ctaIcon} />
+  </Button>
+</a>
