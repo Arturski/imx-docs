@@ -1,4 +1,57 @@
-{
-    "label": "자산 관리",
-    "position": 5
-}
+---
+id: "immutable-x-sdk"
+title: "ImmutableX SDK"
+slug: "/immutable-x-sdk"
+excerpt: "SDK 설치 및 설정"
+sidebar_position: 1
+keywords:
+  - imx-games
+---
+
+The ImmutableX SDK is a Javascript package created by Immutable to allow simple interfacing with ImmutableX’s API. The primarily used packages are Link SDK and the ImmutableX Client.
+
+The ImmutableX Client is used for most backend operations, and the [Link SDK](../link-sdk/index.md) is used for frontend, user-facing interactions.
+
+IMX 클라이언트('ImmutableXClient')는 메서드 호출에서 REST 요청을 래핑하는 모듈입니다. 이 패키지를 사용해 개발자들은 최신 API 표준을 사용해 자신의 호출이 최신인지 확인할 수 있습니다.
+
+링크 SDK는 깨끗한 팝업창과 UI를 제공하여 사용자들이 자신의 지갑으로 최종 서명 절차로 이동할 수 있게 도와줍니다. While information about current market state and assets can be derived with web requests, the Link SDK handles the more complicated STARK signing so developers don't need to code it themselves. Using the Link SDK also maintains a unified view for users, allowing them to be more comfortable during signing when using marketplaces powered by ImmutableX.
+
+자산의 상태를 모니터링하는 애플리케이션은 데이터 검색에 IMX 클라이언트를 사용합니다. 사용자 상호 작용에 의존하는 마켓플레이스와 애플리케이션은 두 패키지를 모두 사용할 것입니다.
+
+## SDK 설정하기
+:::caution 참고: 'create-react-app'의 최신 버전을 사용하는 경우...
+앱으로 [@imbt/imx-sdk](https://www.npmjs.com/package/@imtbl/imx-sdk) SDK의 사용을 시도하는 경우 다수의 웹팩 오류가 발생하게 됩니다.
+
+[웹팩 오류 해결 방법](https://docs.x.immutable.com/docs/create-react-app-webpack-5-errors) 가이드를 따라 주십시오.
+:::
+
+이 튜토리얼에서는 패키지 매니저로 Yarn이 사용되고 있다고 가정합니다. 다음의 노드 모듈을 프로젝트에 추가해야 합니다.
+```bash
+yarn add @imtbl/imx-sdk
+```
+## 패키지 가져오기
+링크 SDK와 IMX 클라이언트 패키지에는 다음의 임포트가 필요합니다.
+```javascript
+import { ImmutableXClient, Link } from '@imtbl/imx-sdk';
+```
+
+## 연결 URL 설정하기
+ImmutableX provides connection addresses for both the mainnet and testnet. 여기서는 예시로 메인넷을 디폴트로 하지만 테스트넷 연결 문자열도 보여줍니다.
+```javascript
+const linkAddress = 'https://link.x.immutable.com';
+const apiAddress = 'https://api.x.immutable.com/v1';
+
+// Sandbox/Goerli Testnet
+//const linkAddress = 'https://link.goerli.x.immutable.com';
+//const apiAddress = 'https://api.goerli.x.immutable.com/v1';
+```
+## 링크 객체 생성하기
+링크 SDK와 IMX 클라이언트를 일단 가져왔다면 초기 내용을 설정할 수 있습니다. 클라이언트 라이브러리 초기화는 비동기식임에 유의하십시오.
+```javascript
+// Link SDK
+const link = new Link(linkAddress);
+
+// IMX Client
+const client = await ImmutableXClient.build({ publicApiUrl: apiAddress });
+```
+더 자세한 정보를 알고 싶다면 [Link SDK](../link-sdk/index.md) 문서 및 [NPM 패키지](https://www.npmjs.com/package/@imtbl/imx-sdk)를 참조하십시오.
