@@ -1,48 +1,27 @@
 ---
-id: "user-registration"
-title: "User registration"
-slug: "/user-registration"
-excerpt: "Prior to trading on ImmutableX, all users need to be registered"
-sidebar_position: 8
+id: 'asset-withdrawals'
+title: 'Asset Withdrawals'
+slug: 'asset-withdrawals'
+sidebar_position: 5
 keywords:
-  - imx-wallets
+  - imx-games
 ---
 
-All new ImmutableX users are required to set up a Layer 2 wallet via [Link](../guides/link-sdk/index.md), which will register and associate the Layer 1 wallet address with a newly generated STARK key.
+인출은 오프체인 환경에서 온체인 환경으로 자산을 이동합니다. 사용자는 인출 요청을 제출하고, 그 인출이 배치에 포함되어 온체인으로 퍼블리싱되기를 기다립니다. 배치가 퍼블리싱되고 나면 사용자는 트랜잭션을 보낼 수 있습니다.
 
-ImmutableX delegates all the security and recovery functionality to the users underlying Ethereum wallet. 이 모든 것은 링크 내부에서 발생하며, 이는 링크가 서명이 필요한 전송, 거래, 취소 및 모든 인증 자산에 서명한다는 것을 의미합니다.
+온체인 및 L2 민팅 자산의 인출 과정은 동일합니다. 다음은 자산 인출 과정의 고급 개요입니다. ![자산 인출](/img/Withdrawals.png)
 
-## 등록 절차
-[사용자 계정을 등록](../guides/getting-started-guide.md#register-a-user-account)할 때, 이뮤터블의 클라이언트(SDK)는 \[EIP-2645\](https://github.com/ethereum/EIPs/pull/2645)에 따라 결정을 위한 연산을 수행합니다. 이뮤터블의 구현에서는 사용자의 링크된 이더리움 키를 사용해 SDK에 임베딩된 정적 보안 문자열에 서명합니다.
+## 인출 과정
 
-이 서명은 계층 키 `m / purpose' / layer' / application' / eth_address_1' / eth_address_2' / index`에 대한 제안의 파생 경로로 정의되는 일반 경로 변수를 갖는 암호 화폐 시드 구문으로 사용됩니다.
+인출은 2단계의 과정으로 이루어집니다.
 
-This binds the generation of your unique Layer 2 (L2) ImmutableX key against your Layer 1 (L1) Ethereum key, which means your L2 security will always be at least as secure as your L1 key.
+- [서명할 수 있는 인출의 세부 내역 확보](/reference#/operations/getSignableWithdrawal)로의 첫 번째 호출은 온체인 자산 입금에 대한 서명할 수 있는 세부 내역 확보 호출과 유사하며, 그 자산에 할당된 금고를 반환합니다.
+- [인출](/reference#/operations/createWithdrawal)로의 두 번째 호출은 인출 과정을 개시하고, 요청의 확인을 게시하고, 다음 배채의 생성 및 제출에 포함될 인출 요청을 제출합니다.
 
-다음은 사용자 등록 절차의 고급 개요입니다.
+배치가 확인(온체인 상태 업데이트)되면 그 즉시 자산은 최초 소유자/자산의 발행자에 의해 인출될 수 있습니다.
 
-![사용자 등록](/img/user-registration.png "사용자 등록")
+드물지만 거래소에 불미스러운 일이 발생하는 경우, 이뮤터블 X는 사용자들에게 전체 인출 요청 옵션을 제공하며 이는 대량 탈출(mass exit) 시나리오라고 알려진 일련의 이벤트를 개시하게 됩니다. 그 후 거래소에는 전체 인출 요청에 응답할 동결 유예 기간(예: 7일)이라고 알려진 기간이 주어집니다.
 
-The generated private key is then passed through an efficient grinding method to enforce distribution within STARK's elliptic curve domain. The generated key pair is what you'll be using on a day-to-day basis to interact with any ImmutableX functionality.
+거래소 서비스가 정상적으로 작동하는 상황에서 거래소는 금고의 지불 가능성을 나타내는 STARK 증명을 제출합니다. Upon acceptance of the proof, the contract adds the withdrawn amount to an on-chain vault and the full withdrawal request is cleared. 그 후 정상적인 온체인 인출 요청을 실행하여 해당 금액을 온체인 금고에서 인출해 다시 사용자의 계정에 넣을 수 있습니다.
 
-:::warning Do not sign on any other platform
-Signing the security string will expose the seed phrase for your ImmutableX key so you must ensure that you **do not** sign the string on any other platform
-:::
-
-[/block] Once your ImmutableX key is generated, you can use the SDK to make a single REST POST call to: `/v1/users` Our [registers a user](/reference#/operations/registerUser) endpoint registers you as a user with the following body as an example:
-```json
-{
-  "ether_key": "0x...",
-  "stark_key": "0x...", // your ImmutableX key
-  "nonce": "...",
-  "stark_signature": "0x..." // your ImmutableX signature
-}
-```
-이게 전부입니다. 그 외에는 이뮤터블에서 전부 처리합니다.
-
-# 사용자 보안
-If you're integrating your application with ImmutableX, you must use the [Link SDK](../guides/link-sdk/index.md) for registering new users. [스스로 사용자 계정 등록](../guides/getting-started-guide.md#register-a-user-account)할 때도 마찬가지로 적용됩니다.
-
-이는 사용자의 지갑을 위해 생성된 L2 키가 제대로 만들어져 생태계 전역에서 작동할 수 있게 해줍니다. 키를 제대로 만드는 데 실패하면 키를 토큰의 입금이나 출금에 사용할 수 없게 됩니다.
-
-링크 SDK는 경매에서 사용자의 서명을 요청할 때도 사용되어야 합니다. 링크로 키를 생성하지 않으면 애플리케이션 사용자에게 보안 이슈가 발생할 수 있습니다.
+거래소에서 요청을 처리하는 데 실패하는 경우(정해진 기간 동안 유효한 증명을 제출하지 않는 경우), 사용자는 컨트랙트를 동결하고 전체 인출 요청이 처리되지 않은 금고를 표시할 수 있습니다. 그 후 사용자는 이뮤터블 X의 데이터 가용성 위원회(Data Availability Committee, DAC)를 통해 동결된 금고 트리 루트와 관련해 축출될 사용자 금고의 머클 트리 경로를 획득하여 온체인에 증명을 제출할 수 있습니다. 증명이 유효하다면 탈출은 성공적으로 이루어지며 사용자의 자산은 사용자만이 인출할 수 있는 온체인 금고에 추가됩니다.
