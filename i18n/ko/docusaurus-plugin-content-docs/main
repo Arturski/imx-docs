@@ -1,40 +1,34 @@
 ---
-id: "welcome"
-title: "Welcome"
-slug: "/welcome"
-excerpt: "The who, why and how of ImmutableX"
-sidebar_position: 1
+id: "generate-imx-signature"
+title: "Generate IMX-Signature"
+slug: "/generate-imx-signature"
+sidebar_position: 5
 keywords:
-  - imx-dx
+  - imx-games
 ---
 
-ImmutableX is a next-generation protocol for trading Ethereum NFTs. 이뮤터블 X는 사용자 보안을 손상하지 않으면서  즉각적인 거래 확인, 큰 확장성, 가스비 없는 서비스를 제공합니다.
+이뮤터블의 일부 API 엔드 포인트에서는 헤더에 **IMX-Signature**를 요구합니다.
+* **컬렉션**
+    * [createCollection](https://docs.x.immutable.com/reference#/operations/createCollection)
+    * [updateCollection](https://docs.x.immutable.com/reference#/operations/updateCollection)
+* **메타데이터**
+    * [addMetadataSchemaToCollection](https://docs.x.immutable.com/reference#/operations/addMetadataSchemaToCollection)
+    * [updateMetadataSchemaByName](https://docs.x.immutable.com/reference#/operations/updateMetadataSchemaByName)
+* **프로젝트**
+    * [getProjects](https://docs.x.immutable.com/reference#/operations/getProjects)
+    * [getProject](https://docs.x.immutable.com/reference#/operations/getProject)
+    * [createProject](https://docs.x.immutable.com/reference#/operations/createProject)
 
-[Immutable](https://immutable.com/#build-on-immutable) and [StarkWare](https://starkware.co/about-us/) partnered to create **ImmutableX**, combining StarkWare's world-class layer-2 scaling knowledge with Immutable's deep understanding of the NFT space.
+### `IMX-Signature`는 어떻게 얻을 수 있나요?
+IMX-Signature는 프로젝트 소유자의 **ETH 키(지갑 주소)**(즉, "0x...")로 서명된 **Unix 에포크 타임스탬프**(즉, "1654483072")로 구성되어 있습니다.
 
-## Why ImmutableX?
-현재 이더리움 네트워크에서의 거래는 제대로 작동하지 않고 있습니다. 이더리움 네트워크는 현재 30%의 네트워크 사용량으로 매일 약 150,000개의 대체 불가능한 토큰 트랜잭션을 지원하고 있습니다.
+#### `timestamp`와 `signature`는 어떻게 생성되나요?
+```typescript
+const timestamp = Math.floor(Date.now() / 1000).toString();
+const signature = await signRaw(timestamp, signer); // IMX-Signature
+```
 
-거래는 때로 실패할 수도 있고 거래가 이루어지는 대신 소유자에게 자산을 반환하기도 합니다. 처리 속도는 일관적이지 않아 때로는 한 시간 이상이 소요되기도 합니다. 이것은 거래를 시도하는 사용자들에게 귀찮은 일일 뿐만 아니라 네트워크에서 구축하는 개발자들에게도 문제를 야기할 수 있습니다.
+위치:
+* **signer**: [@ethersproject/abstract-signer](https://www.npmjs.com/package/@ethersproject/abstract-signer)의 서명자
+* **signRaw**: [imx-core-sdk](https://github.com/immutable/imx-core-sdk/blob/main/src/utils/crypto/crypto.ts#L79-L85)의 함수
 
-그뿐만 아니라 개발자들이 지속적으로 NFT를 민팅할 수 없어 프로젝트가 계속 확장하기 위해 적절히 자금을 모으고 사용자를 위한 더 많은 컨텐츠를 만드는 것을 불가능하게 만듭니다.
-
-**[이더리움 확장성에 대해 더 알아보기](./ethereum-scalability.md)**
-
-Our plan is for ImmutableX to support **more than 200 million trades** per day while consuming **less than 30%** of Ethereum’s capacity.
-
-이뮤터블의 목표는 이더리움에서 게임, 애플리케이션, 거래소 구축을 가능하게 만드는 것입니다. 이뮤터블의 목표는 이더리움 NFT의 민팅과 거래를 전통적인 디지털 자산의 거래보다 훨씬 쉽게 만드는 것입니다.
-
-## 왜 이더리움인가요? {#why-ethereum}
-이뮤터블은 이더리움이 가장 큰 네트워크 효과를 가진 가장 크고 가장 안정한 블록체인이기에 이더리움에 구축하기로 선택했습니다.
-
-이더리움을 선택하면 제3자로 인한 정지 시간, 사기, 통제 또는 간섭 없이 구축되고 실행될 [스마트 컨트랙트](./introduction-smart-contracts.md)와 탈중앙화 애플리케이션(dApps)의 배포가 가능합니다.
-
-**[이더리움에 대해 더 알아보기](./core-concepts.md#ethereum)**
-
-## 작동 방식 {#how-it-works}
-ImmutableX uses a ZK rollup: we take thousands of off-chain trades, generate a proof that these trades were all valid (i.e. the users who owned the assets signed the trades), and then publish that proof on-chain, where it is verified by a smart contract.
-
-이 과정 중 온체인 자산은 스마트 컨트랙트에 수용되며, 이를 포함한 유효한 증명이 배치에서 퍼블리싱된 후에만 방출됩니다.
-
-**[ZK 롤업에 대해 더 알아보기](./architecture-overview.md#zk-rollups)**
