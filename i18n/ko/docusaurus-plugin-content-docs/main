@@ -1,73 +1,115 @@
 ---
-title: "Onboarding"
-slug: "/onboarding"
+title: "Collection registration"
+slug: "/collection-registration"
+sidebar_position: 2
 keywords:
-  - imx-dx
+  - imx-games
 ---
 
-Below is a high-level overview of the steps required to onboard with ImmutableX.
+컬렉션 등록 전 사용자는 [자신의 프로젝트를 등록](./project-registration.md)해야 합니다.
 
-# 시작하기 전
-The ImmutableX test environment uses Goerli. 아직 준비하지 않았다면, 이더리움 지갑 및 몇몇 테스트 ETH로 [테스트를 준비](../getting-started-guide.md#prepare-to-test)하십시오. 또한 프로젝트를 등록할 수 있으려면 그전에 [사용자로 등록](../getting-started-guide.md#register-a-user-account)해야 합니다. :::info Common Terms  
-The following explains a couple of ImmutableX terms used throughout our guides:
+컬렉션은 배포된 스마트 컨트랙트를 나타냅니다. All minted assets belong to a collection, and in order to mint assets on L2 you must first register your collection (smart contract) with ImmutableX.
 
-When you register a **collection** with ImmutableX it creates a **project**. 프로젝트는 [crypto-wallet address](../getting-started-guide.md#wallet)와 관련된 관리 수준의 독립체로, **소유자 주소**라고도 불립니다. 하나의 프로젝트에는 수많은 관련 **컬렉션**이 있습니다.
+각각의 컬렉션은 하나의 프로젝트에 속하며, 모든 프로젝트는 4주 기간 내에 **5개**의 컬렉션을 생성하도록 제한됩니다. [더 알아보기](./project-registration.md#project-limits).
+
+:::info 프로젝트 한도 늘리기
+민팅과 컬렉션의 프로젝트 한도는 자신의 프로젝트에 대해 [고객 지원팀](https://support.immutable.com)에 연락함으로써 증가될 수 있습니다. 증가해야 하는 이유를 꼭 설명하십시오. 이뮤터블 X 팀에서는 사용자의 요청에 2 영업일 내에 응답합니다.
 :::
-## 1. 스마트 컨트랙트 배정
-L2의 모든 스마트 컨트랙트는 토큰이 제대로 입금 및 인출되기 위해서 현재 그에 상응하는 L1 이더리움 컨트랙트를 필요로 합니다.
 
-To test your assets, minting, and trading flows, you need to deploy an ERC-721 contract on the Goerli test network, then register it with ImmutableX. Similarly, to mint on mainnet Ethereum, you need to deploy an ERC-721 contract on mainnet, then follow the same steps.
+## 컬렉션 생성
+컬렉션에는 다음의 필드가 포함됩니다.
 
-스마트 컨트랙트의 예시는 [imx-contracts](https://github.com/immutable/imx-contracts) 레포에서 확인할 수 있습니다.
+<table>
+  <thead>
+  <tr>
+    <th>필드</th>
+    <th>필수(기본 값)</th>
+    <th>값 유형 / 참고</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      <code>name</code>
+    </td>
+    <td>예</td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td>
+      <code>description</code>
+    </td>
+    <td>아니오</td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td>
+      <code>owner_public_key</code>
+    </td>
+    <td>예</td>
+    <td>이 값이 <code>contract_address</code>에 지정된 스마트 컨트랙트의 소유자와 일치하도록 하십시오. <code>owner_public_key</code>는 업데이트할 수 없습니다.</td>
+  </tr>
+  <tr>
+    <td>
+      <code>contract_address</code>
+    </td>
+    <td>예</td>
+    <td><code>contract_address</code> 필드는 유효한 스마트 컨트랙트를 반드시 포함해야 합니다. 이뮤터블 X는 지정된 주소에 바이트코드가 존재하도록 하여 이를 인증합니다.</td>
+  </tr>
+  <tr>
+    <td><code>metadata_api_url</code></td>
+    <td>예</td>
+    <td><a href="minting-on-immutable-x#metadata-api">여기를 참고하십시오</a></td>
+  </tr>
+  <tr>
+    <td><code>icon_url</code></td>
+    <td>아니오</td>
+    <td>마켓플레이스에 깨진 아이콘 링크가 나타날 수 있으므로 이 값으로 비어 있는 텍스트나 url이 아닌 값을 넣지 마십시오.</td>
+  </tr>
+  <tr>
+    <td><code>collection_image_url</code></td>
+    <td>아니오</td>
+    <td>표시 목적으로 사용됩니다.</td>
+  </tr>
+  </tbody>
+</table>
 
-L2에서 L1으로 자산을 인출할 수 있도록 하려면 [자산 민팅](../asset-management/asset-minting.md)의 테스트 가이드라인을 따르십시오.
-
-## 2. 프로젝트 등록
-NFT의 컬렉션을 생성하기 위해서는 먼저 컬렉션의 생성자로서 프로젝트를 등록해야 합니다.
-
-프로젝트는 소유자 주소, 즉 [사용자 계정의 등록](../getting-started-guide.md#register-a-user-account)에 사용되는 이더리움 지갑의 주소와 관련된 관리 차원의 개체입니다. 프로젝트 소유자만이 컬렉션 및 메타데이터 스키마의 생성과 업데이트 등의 관리 작업의 수행 권한을 받습니다.
-
-- 하나의 사용자 계정(지갑 주소로 정의)은 여러 프로젝트를 소유할 수 있습니다.
-- 하나의 프로젝트는 여러 컬렉션을 가질 수 있습니다.
-- 모든 프로젝트는 4주의 롤링 주기마다 **5개**의 컬렉션과 **50,000개**의 민팅 요청의 한도를 갖습니다.
-
-가이드 보기:[프로젝트 등록](./project-registration.md)
-
-## 3. 컬렉션 등록
-컬렉션은 하나의 프로젝트 하에서 민팅된 NFT 시리즈를 뜻하며 배포된 특정 스마트 컨트랙트에 해당합니다.
-
-All minted assets belong to a collection, and in order to mint assets on L2 you must first register your collection (smart contract) with ImmutableX.
-
-- 각각의 컬렉션은 프로젝트에 속합니다.
-- 각각의 컬렉션은 수많은 유사하거나 상이한 NFT를 포함합니다.
-
-가이드 보기:[컬렉션 등록](./collection-registration.mdx)
-
-## 4. 메타데이터 스키마 등록
-컬렉션의 메타데이터 스키마는 민팅할 수 있는 NFT의 속성뿐만 아니라 잠재적인 값과 그러한 속성의 유형을 설명합니다.
-
-예를 들어 "이미지 백그라운드는 0-255 사이의 임의의 색상 값일 수 있다" vs "이 목록의 특정 색상 값이다", 또는 "마켓플레이스 트레이더는 이 컬렉션을 속성으로 필터링할 수 있다" vs "할 수 없다"와 같은 식입니다.
-
-- 각각의 컬렉션은 메타데이터 스키마를 갖습니다.
-- 각각의 NFT는 메타데이터 스키마의 속성으로 정의됩니다.
-
-가이드 보기: [메타데이터 스키마 등록](./metadata-schema-registration.mdx)
-
-**[자산 메타데이터에 관해 더 알아보기](../asset-management/asset-metadata.mdx)**
-
-:::caution Metadata refreshing requires support
-While you can register your own collections and metadata on Goerli, you **cannot** execute a metadata refresh yourself.
-
-메타데이터 변경을 새로 고침하려면, [고객 지원팀에 연락](https://support.immutable.com)하여 재크롤링되어야 하는 토큰과 그 토큰에 실행되어야 하는 업데이트를 확인해야 합니다.
-
-요청에는 최대 2영업일(AEST)이 소요됩니다.
+:::info 예시 코드 보기
+이뮤터블 X의 저장소 [imx-examples](https://github.com/immutable/imx-examples)에서는 사용하기 간편한 오픈 소스 예시를 제공합니다. 시작하려면 README에 있는 안내를 따르십시오.
 :::
-## 5. 자산 민팅
-Once your contract has been registered, you can mint gas-free on ImmutableX.
 
-자세한 내용은 다음의 가이드를 확인하십시오.
-- [Minting on ImmutableX](../minting-on-immutable-x.md)
-- [자산 민팅](../asset-management/asset-minting.md)
+## 기존 컬렉션 업데이트
+<table>
+  <thead>
+  <tr>
+    <th>필드</th>
+    <th>값 유형 / 참고</th>
+  </tr>
+  </thead>
+  <tbody>
+  <tr>
+    <td>
+      <code>name</code>
+    </td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td>
+      <code>description</code>
+    </td>
+    <td>텍스트</td>
+  </tr>
+  <tr>
+    <td><code>icon_url</code></td>
+    <td>마켓플레이스에 깨진 아이콘 링크가 나타날 수 있으므로 이 값으로 비어 있는 텍스트나 url이 아닌 값을 넣지 마십시오.</td>
+  </tr>
+  <tr>
+    <td><code>collection_image_url</code></td>
+    <td>표시 목적으로 사용됩니다.</td>
+  </tr>
+  </tbody>
+</table>
 
-## 6. 애플리케이션 통합
-To start building an application on ImmutableX, see our [integrate your application](../integrate-your-application/index.md) guides.
+:::caution 이 필드는 수정이 허용되지 않습니다
+`contract_address`는 변경해서는 안 되는 필드입니다. 민팅 후 `metadata_api_url`가 수정되면 이전 `metadata_api_url`를 사용한 기존 자산이 수정됩니다.  새로운 민팅에는 `metadata_api_url`가 사용됩니다.
+:::
