@@ -1,107 +1,57 @@
 ---
-id: 'sdks'
-title: 'ImmutableX SDKs'
-slug: '/sdks'
-description: 'ImmutableX SDKs'
+id: "immutable-x-sdk"
+title: "ImmutableX SDK"
+slug: "/immutable-x-sdk"
+excerpt: "SDK 설치 및 설정"
+sidebar_position: 1
 keywords:
-  - imx-dx
+  - imx-games
 ---
 
-'@site/src/components/SdkButtonList'에서 SdkButtonList 가져오기; '@site/src/components/Article/styles.module.css'에서 articleStyles 가져오기; '@site/src/constants'에서 { coreSDKs, walletSDKs, linkSDK } 가져오기;
+The ImmutableX SDK is a Javascript package created by Immutable to allow simple interfacing with ImmutableX’s API. The primarily used packages are Link SDK and the ImmutableX Client.
 
-# SDK 개요
+The ImmutableX Client is used for most backend operations, and the [Link SDK](../link-sdk/index.md) is used for frontend, user-facing interactions.
 
-이뮤터블은 애플리케이션 개발자들이 기본적인 기능뿐만 아니라 더욱 발전된 기능을 실행하는 것을 쉽게 만들어 줄 다양한 언어와 프레임워크에 SDK를 제공합니다.
+IMX 클라이언트('ImmutableXClient')는 메서드 호출에서 REST 요청을 래핑하는 모듈입니다. 이 패키지를 사용해 개발자들은 최신 API 표준을 사용해 자신의 호출이 최신인지 확인할 수 있습니다.
 
-제공되는 유형에는 세 가지가 있습니다.
-* **[Core SDK](#core-sdks)** - API 엔드 포인트에 대한 래퍼뿐만 아니라 일반 동작을 더 쉽게 구현할 수 있게 해주는 워크 플로우 기능을 제공합니다. It facilitates all the functionality that the ImmutableX platform provides.
-* **[Wallet SDK](#wallet-sdks)** - 다양한 플랫폼 상의 사용자 지갑을 연결하고 상태 업데이트 트랜잭션(즉, 오더 매도, 자산의 소유권 이전)의 사용자 승인(서명)을 가능하게 만들어 애플리케이션이 [사용자 트랜잭션](#what-are-user-transactions)을 촉진하게 만듭니다. Core SDK와 함께 사용될 수 있습니다.
-* **[Link SDK](../main/guides/link-sdk/index.md)** - 사용자들이 볼 수 있는 유저 인터페이스, 이러한 트랜잭션의 서명 및 승인을 포함해 [사용자 트랜잭션](#what-are-user-transactions)을 촉진하는 데 필요한 모든 기능을 제공합니다.
+링크 SDK는 깨끗한 팝업창과 UI를 제공하여 사용자들이 자신의 지갑으로 최종 서명 절차로 이동할 수 있게 도와줍니다. While information about current market state and assets can be derived with web requests, the Link SDK handles the more complicated STARK signing so developers don't need to code it themselves. Using the Link SDK also maintains a unified view for users, allowing them to be more comfortable during signing when using marketplaces powered by ImmutableX.
 
-#### ***사용자 트랜잭션이란?***
-사용자 트랜잭션은 자산 소유자의 승인(서명)이 필요한 자산 소유권의 변경을 다루는 거래입니다. 이러한 트랜잭션은 단순히 데이터를 읽는 것과는 대조적으로, 블록체인에 있는 자산의 상태를 업데이트합니다.
+자산의 상태를 모니터링하는 애플리케이션은 데이터 검색에 IMX 클라이언트를 사용합니다. 사용자 상호 작용에 의존하는 마켓플레이스와 애플리케이션은 두 패키지를 모두 사용할 것입니다.
 
-## SDK들은 어떻게 함께 작동하나요?
+## SDK 설정하기
+:::caution 참고: 'create-react-app'의 최신 버전을 사용하는 경우...
+앱으로 [@imbt/imx-sdk](https://www.npmjs.com/package/@imtbl/imx-sdk) SDK의 사용을 시도하는 경우 다수의 웹팩 오류가 발생하게 됩니다.
 
-The **Core SDK** is responsible for the bulk of functionality that is available on the ImmutableX platform. 이것은 사용자의 승인을 요구하는 특정 트랜잭션에 서명할 수 있도록 사용자 지갑과 연결하기 위해 **Wallet SDK**와 함께 사용될 수 있습니다.
+[웹팩 오류 해결 방법](https://docs.x.immutable.com/docs/create-react-app-webpack-5-errors) 가이드를 따라 주십시오.
+:::
 
-**Link SDK**는 사용자 트랜잭션의 대부분에 종단간 기능을 제공하며 다른 SDK와 함께 사용될 필요가 없습니다.
+이 튜토리얼에서는 패키지 매니저로 Yarn이 사용되고 있다고 가정합니다. 다음의 노드 모듈을 프로젝트에 추가해야 합니다.
+```bash
+yarn add @imtbl/imx-sdk
+```
+## 패키지 가져오기
+링크 SDK와 IMX 클라이언트 패키지에는 다음의 임포트가 필요합니다.
+```javascript
+import { ImmutableXClient, Link } from '@imtbl/imx-sdk';
+```
 
-### 기능 매트릭스 예시
-<table>
-    <tbody>
-        <tr>
-            <th></th>
-            <th colspan="1">사용자 지갑에 연결</th>
-            <th colspan="4">사용자 서명이 필요한 동작</th>
-            <th colspan="4">사용자 서명이 필요하지 않은 동작</th>
-        </tr>
-        <tr>
-            <th></th>
-            <th>트랙잭션 서명</th>
-            <th>사용자 등록</th>
-            <th>오더 및 거래 생성</th>
-            <th>L1-L2 전송(입금 및 인출)</th>
-            <th>L2 토큰 민팅</th>
-            <th>자산 목록 가져오기</th>
-            <th>오더 가져오기</th>
-            <th>거래 가져오기</th>
-            <th>사용자 잔고 가져오기</th>
-        </tr>
-        <tr>
-            <th>Wallet SDK</th>
-            <td>✅</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-        </tr>
-        <tr>
-            <th>Link SDK</th>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>
-            <td>❌</td>        
-        </tr>
-        <tr>
-            <th>Core SDK</th>
-            <td>❌</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-            <td>✅</td>
-        </tr>
-    </tbody>
-</table>
+## 연결 URL 설정하기
+ImmutableX provides connection addresses for both the mainnet and testnet. 여기서는 예시로 메인넷을 디폴트로 하지만 테스트넷 연결 문자열도 보여줍니다.
+```javascript
+const linkAddress = 'https://link.x.immutable.com';
+const apiAddress = 'https://api.x.immutable.com/v1';
 
-## Core SDK
-<SdkButtonList sdks={coreSDKs} />
+// Sandbox/Goerli Testnet
+//const linkAddress = 'https://link.sandbox.x.immutable.com';
+//const apiAddress = 'https://api.sandbox.x.immutable.com/v1';
+```
+## 링크 객체 생성하기
+링크 SDK와 IMX 클라이언트를 일단 가져왔다면 초기 내용을 설정할 수 있습니다. 클라이언트 라이브러리 초기화는 비동기식임에 유의하십시오.
+```javascript
+// Link SDK
+const link = new Link(linkAddress);
 
-## Wallet SDK
-<SdkButtonList sdks={walletSDKs} />
-
-## Link SDK
-<SdkButtonList sdks={linkSDK} />
-
-## 오픈 API 사양
-
-이뮤터블의 오픈 API 사양은 다양한 언어에서 자동 클라이언트 생성을 지원함으로써 개발자들이 API와 효율적으로 상호 작용할 수 있는 자율권을 부여합니다.
-
-<a href="https://github.com/immutable/imx-core-sdk/blob/main/openapi.json">
-  <Button>
-    이뮤터블 오픈 API 사양 <RightArrowIcon className={articleStyles.ctaIcon} />
-  </Button>
-</a>
+// IMX Client
+const client = await ImmutableXClient.build({ publicApiUrl: apiAddress });
+```
+더 자세한 정보를 알고 싶다면 [Link SDK](../link-sdk/index.md) 문서 및 [NPM 패키지](https://www.npmjs.com/package/@imtbl/imx-sdk)를 참조하십시오.
