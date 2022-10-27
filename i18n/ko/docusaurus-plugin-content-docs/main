@@ -1,71 +1,94 @@
 ---
-id: "marketing-support"
-title: "Marketing support"
-slug: "/marketing-support"
-sidebar_position: 2
+id: "minting-with-royalties"
+title: "Minting with royalties"
+slug: "/minting-with-royalties"
+sidebar_position: 1
 keywords:
-  - imx-marketing
+  - imx-traders
 ---
 
-"@site/src/components/Button"에서 버튼 임포트;
+Royalties for a given asset are defined at the point of minting a new asset to the ImmutableX protocol. 민팅하기 전 [수령인을 등록](../user-registration.md)해 주십시오.
 
-As the ImmutableX community has grown, we've received an increasing number of requests for marketing support to help with the growth of projects. 이뮤터블은 가능한 한 많은 프로젝트를 지원하고 자신들의 커뮤니티를 구축하고 출시 후 많은 양의 트랜잭션을 달성하는 프로젝트에 보상을 지급하고자 합니다.
+## 새로 민팅된 자산의 로열티 수수료
+로열티가 적용되는 민팅을 하기 위해서는 `@imtbl/imx-sdk`의 `>= 1.1.3` 버전이 필요합니다.
 
-이를 위해 이뮤터블에서는 티어별 지원 방식을 만들었습니다. 커뮤니티를 더 많이 구축할수록 더 많은 지원을 제공합니다! 어느 티어에 자격이 충족되는지 아래를 확인해 보십시오.
+`minter`를 설정하려면 이 [민팅 예시](../asset-management/asset-minting.md#minting-example)를 참고해 주십시오.
 
-## 티어별 마케팅 지원
+위의 예시와 아래의 예시 간의 차이점은 `mints`의 객체 구조입니다. 이전의 예시에서는 수수료를 지원하지 않아 더 이상 사용되지 않을 것이며 아래의 예시로 대체합니다.
+```typescript
+const result = await minter.mintV2([
+  {
+      "contractAddress": "0xc6185055ea9891d5d9020c927ff65229baebdef2",
+      "royalties": [ // global fees
+          {
+              "recipient": "0xA91E927148548992f13163B98be47Cf4c8Cb3B16",
+              "percentage": 2.5
+          }
+      ],
+      "users": [
+          {
+              "etherKey": "0xc3ec7590d5970867ebd17bbe8397500b6ae5f690",
+              "tokens": [
+                  {
+                      // ERC-721
+                      "id": "1",
+                      "blueprint": "my-on-chain-metadata",
+                      "royalties": [ // override global fees on a per-token basis
+                          {
+                              "recipient": "0xc3ec7590d5970867ebd17bbe8397500b6ae5f690",
+                              "percentage": 2.5
+                          }
+                      ],
+                  }
+              ]
+          },
+          {
+              "etherKey": "0xA91E927148548992f13163B98be47Cf4c8Cb3B16",
+              "tokens": [
+                  {
+                      // ERC-721
+                      "id": "",
+                      "blueprint": ""
+                  }
+              ]
+          },
+          ...
+      ]
+  }
+]);
+```
+응답은 다음과 같습니다.
+```json
+// Returns
+{
+  [
+    {
+      "contract_address": string;
+      "token_id": string;
+      "tx_id": number;
+    },
+    {
+      "contract_address": string;
+      "token_id": string;
+      "tx_id": number;
+    },
+    ....
+   ]
+}
+```
+*참고: 값은 형식을 나타내는 용도로만 사용됩니다.*
 
-프로젝트가 어느 티어에 해당하는지 확인한 후, 마케팅 지원에 신청서를 제출하기 전 신중하게 [약관](#terms-and-conditions)을 읽어 주십시오.
+## 중요한 사항
+`users.etherKey`는 토큰이 민팅될 유효한 이더리움 지갑 주소를 나타냅니다.
 
-<table>
-  <thead>
-    <tr><th>프로젝트 단계</th><th>지원 티어</th><th>지원 수준</th><th>요구 사항</th></tr>
-  </thead>
-  <tbody>
-    <tr><td>출시 전</td><td>1티어 🎉</td><td>리트윗</td><td>트위터 팔로워 1천~5천 명<br /><br />
-또는<br /><br />
-디스코드 회원 5천~1만 명</td></tr><tr><td></td><td>2티어 🎉🎉</td><td>1티어 + 디스코드 AMA + 사은품(원하는 경우)</td><td>트위터 팔로워 5천~1만 명<br /><br />
-또는<br /><br />
-디스코드 회원 1만~2.5만 명</td></tr><tr><td></td><td>3티어 🎉🎉🎉</td><td>2티어 + 전용 트윗</td><td>&gt;트위터 팔로워 1만 명<br /><br />
-또는<br /><br />
-&gt;디스코드 회원 2.5만 명</td></tr><tr><td>출시 후</td><td>1티어 🎉</td><td>리트윗</td><td>L2에서 50~100 ETH 거래<br /><br />
-또는<br /><br />
-트위터 팔로워 5천~1만 명<br /><br />
-또는<br /><br />
-디스코드 회원 1만~2.5만 명</td></tr><tr><td></td><td>2티어 🎉🎉</td><td>1티어 + 디스코드 AMA + 사은품(원하는 경우)</td><td>L2에서 100~500 ETH 거래<br /><br />
-또는<br /><br />
-트위터 팔로워 1만~2.5만 명<br /><br />
-또는<br /><br />
-디스코드 회원 2.5만~3.5만 명</td></tr><tr><td></td><td>3티어 🎉🎉🎉</td><td>2티어 + 전용 트윗</td><td>L2에서 100~1,000 ETH 거래<br /><br />
-또는<br /><br />
-&gt;트위터 팔로워 2.5만 명<br /><br />
-또는<br /><br />
-&gt;디스코드 회원 3.5만 명</td></tr><tr><td></td><td>4티어 🎉🎉🎉🎉</td><td>3티어 + 블로그 포스팅</td><td>&gt;L2에서 1,000 ETH 거래<br /><br />
-및 최소 다음 중 하나<br /><br />
-&gt;트위터 팔로워 2.5만 명<br /><br />
-또는<br /><br />
-&gt;디스코드 회원 3.5만 명</td></tr></tbody></table>
+`id`는 시스템의 자산용입니다. 이 ID는 해당 자산과 연관된 메타데이터를 가져오기 위해 컨트랙트 등록 중에 제공된 메타데이터 엔드 포인트와 함께 사용됩니다.
 
-지원 티어 조건에는 들지 못하지만 자랑하고 싶은 독특하거나, 흥미롭거나 또는 혁신적인 프로젝트가 있으십니까? 조건에 상관없이 신청서를 작성해 주시면 마케팅 지원을 제공할 수 있는 경우 연락을 드리도록 하겠습니다.
+`blueprint` is on chain metadata that will be included as part of the Layer 1 mint if the minted ERC-721 token is withdrawn from ImmutableX onto Layer 1 Ethereum. 현재 빈 스트링이 아닌 한 어떤 스트링이라도 될 수 있습니다.
 
-### 약관
+퍼센티지는 최대 소수점 2자리까지 규정할 수 있습니다. 소수점 2자리를 초과하는 부분은 버려집니다. 이는 반올림으로 모든 구성 퍼센티지의 총합이 100%를 초과하지 않도록 하기 위함입니다.
 
-마케팅 지원을 위해 신청서를 제출하기 _전_ 다음 약관을 신중하게 읽어주십시오.
+## 자산 로열티 수수료 보기
 
-- 이뮤터블은 어떤 사유로든 요청을 들어주지 않을 권리를 가지고 있습니다.
-- 이뮤터블은 공동 마케팅을 통해 가능한 한 많은 프로젝트를 지원하는 것을 목표로 하고 있습니다. 하지만 현재 많은 수의 마케팅 지원 요청을 받고 있는 상황입니다.
-- 정원에 도달하는 경우, 요청은 선착순으로 이행되지 않을 수 있습니다. 이뮤터블은 각 프로젝트의 장점을 평가하고 높은 지원 티어와 프로토콜에 가장 많은 유동성을 가져다주는 프로젝트를 우선으로 할 것입니다.
-- 마케팅 지원 요청서에서 선택한 지원 티어는 확인을 거치게 됩니다.
-- 마케팅 지원 요청서를 제출했으나 선택한 지원 티어에 자격이 충족되지 않는 경우, 요청을 이행하지 않고 후속 조치를 위해 연락을 취할 수 있습니다.
-- 지원 티어와 지원 수준은 통지 없이 언제든 변경될 수 있습니다.
-- 5 영업일 미만의 요청은 처리되지 않을 수 있습니다.
-- 요청을 처리하기 전 신원 확인을 요청할 수 있습니다.
+사용자는 [자산 API](/reference#/operations/getAsset)를 통해 주어진 자산의 로열티 정보를 볼 수 있습니다. 자산 API는 자산과 관련된 각 로열티의 로열티 수령인과 수수료 퍼센티지를 반환합니다.
 
-## 지원 신청
-
-준비되셨나요? 아래를 클릭하여 마케팅 지원 신청서를 제출하십시오.
-<a href="https://godsunchained2.typeform.com/to/pOZSdsQW"><Button>지금 신청하기</Button></a>
-<br /><br />
-
-
-**참고:** 신청서와 관련해 추가 정보가 필요한 경우에만 연락을 드립니다.
+수수료의 세부 내역을 요청하는 경우, `1.1.0` 이상 버전으로 업그레이드하십시오. 이는 결과에서 `fees`열이 해당 오더에 존재하고 `include_fees` 플래그가 쿼리파람으로 첨부되지 않는 한 `fees` 열를 생략하는 API에도 적용됩니다. 더 자세한 내용을 알고 싶다면 [API docs](/reference#/operations/listAssets)를 참조해 주십시오.
