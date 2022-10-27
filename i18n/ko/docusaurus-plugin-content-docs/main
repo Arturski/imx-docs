@@ -1,4 +1,343 @@
-{
-    "label": "가이드",
-    "position": 2
-}
+---
+id: "wallet-sdk-ui-guide"
+title: "사용자 지갑 상호작용 구현을 위한 UI 가이드"
+slug: "/wallet-sdk-ui-guide"
+sidebar_position: 10
+keywords:
+  - imx-wallets
+---
+
+# 사용자 지갑 상호작용 구현을 위한 UI 가이드
+
+이 가이드는 사용자 지갑 연결과 상호작용을 구현할 때 최소 요건을 명확히 하는 것을 목표로 하고 있습니다.
+
+이전에는 링크 SDK가 모범 사례를 구현한 독창적인 UI를 제공하였기 때문에 [Link SDK](/docs/sdk-api)를 사용하는 애플리케이션은 이를 염려할 필요가 없었습니다. 이제 [Wallet SDK를 Core SDK와 함께](/docs/sdks#how-do-the-sdks-work-together) 사용할 때, 애플리케이션은 자신의 고유한 디자인을 구현해야 할 필요가 있습니다. 이 가이드에서 설명한 필수 항목 이외에 나머지는 애플리케이션에 달렸습니다.
+
+## 사용자 상호작용
+* [지갑 연결하기](#connect-wallet)
+* [지갑 연결 해제하기](#disconnect-wallet)
+* [자산 상장하기](#list-asset)
+* [자산 구매하기](#buy-asset)
+* [L1에서 L2로 입금하기](#l1-to-l2-deposit)
+* [L2에서 L1으로 인출하기](#l2-to-l1-withdrawals)
+* [명목 화폐 환전](#fiat-onramp)
+* [암호 화폐에서 명목 화폐로 환전](#crypto-to-fiat-offramp)
+* [오류 상태](#error-states)
+* [트랜잭션 히스토리](#transaction-history)
+
+### 지갑 연결하기
+
+<table>
+        <tr>
+            <th>플로우</th>
+            <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+            <th>요구 사항</th>
+        </tr>
+        <tr>
+            <td>공급자 목록</td>
+            <td><a href="/img/wallet-sdk-ui-guide/list.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/list.png" alt="공급자 목록" width="85%" height="85%" /></a></td>
+            <td>
+                <ul>
+                    <li>지갑 옵션을 나타내는 메카니즘 제공</li>
+                    <li>이뮤터블의 약관 및 개인정보보호정책의 사용자 승인 포함</li>
+                </ul>    
+            </td>
+        </tr>
+        <tr>
+            <td>이메일 로그인</td>
+            <td><a href="/img/wallet-sdk-ui-guide/email.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/email.png" alt="이메일 로그인" width="85%" height="85%" /></a></td>
+            <td>
+                애플리케이션이 옵션으로 (Magic에서 제공하는) 이메일 지갑 제공을 선택하는 경우, 반드시 다음을 준수해야 합니다.
+                <ul>
+                    <li>사용자가 이메일 주소를 입력할 수 있는 필드 제공</li>
+                    <li>Magic의 약관 및 개인정보보호정책 포함</li>
+                </ul>    
+            </td>
+        </tr>
+        <tr>
+            <td>메타마스크 + 게임스탑</td>
+            <td><a href="/img/wallet-sdk-ui-guide/sign.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/sign.png" alt="서명 요청" width="85%" height="85%" /></a></td>
+            <td>
+                필수는 아니지만 다음 사항을 포함하면 유용합니다.
+                <ul>
+                    <li>비관리형(non-custodial) 지갑에서 여러 서명을 요청하는 이유에 대한 설명:</li>
+                    <ul>
+                        <li>사용자 지갑에 연결</li>
+                        <li>사용자의 서명 요청</li>
+                        <li>Setting up an ImmutableX layer 2 wallet key (only needed the first time a user connects with ImmutableX - this is user registration)</li>
+                    </ul>
+                    <li>메타마스크와 게임스탑에 모두 지갑 옵션이 제공되는 경우, 동시에 두 플러그인을 모두 갖는 것은 지갑 연결 문제를 야기할 수 있음을 설명하십시오(더 자세한 정보는 <a href="https://support.immutable.com/hc/en-us/articles/5160531224079-Managing-multiple-wallet-extensions-for-Immutable">여기</a>에서 확인할 수 있습니다)</li>
+                </ul>    
+            </td>
+        </tr>
+        <tr>
+            <td>지갑 연결</td>
+            <td></td>
+            <td>
+                필수는 아니지만 다음 사항을 포함하면 유용합니다.
+                <ul>
+                    <li>지갑이 성공적으로 연결되었다는 사용자 피드백</li>
+                </ul>    
+            </td>
+        </tr>
+</table>
+
+### 지갑 연결 해제하기
+
+<table>
+    <tr>
+            <th>플로우</th>
+            <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+            <th>요구 사항</th>
+        </tr>
+        <tr>
+            <td>지갑 연결 해제하기</td>
+            <td><a href="/img/wallet-sdk-ui-guide/disconnect.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/disconnect.png" alt="지갑 연결 해제하기" width="85%" height="85%" /></a></td>
+            <td>
+                <ul>
+                    <li>사용자가 애플리케이션에서 지갑을 연결 해체할 수단을 제공</li>
+                </ul>    
+            </td>
+        </tr>
+</table>
+
+### 자산 상장
+
+<table>
+    <tr>
+            <th>플로우</th>
+            <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+            <th>요구 사항</th>
+        </tr>
+        <tr>
+            <td>상장 화면</td>
+            <td>
+                <a href="/img/wallet-sdk-ui-guide/list-1.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/list-1.png" alt="List asset 1" width="65%" height="65%" /></a><br/>
+                <a href="/img/wallet-sdk-ui-guide/list-2.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/list-2.png" alt="자산 상장 2" width="85%" height="85%" /></a>
+            </td>
+            <td>
+                <ul>
+                    <li>사용자가 상장 가격을 입력할 수 있게 해줌</li>
+                    <li>사용자가 상장 통화를 선택할 수 있게 해줌(여러 옵션이 주어지는 경우)</li>
+                    <li>적용되는 메이커 및 테이커 수수료 세부 내역 제공</li>
+                </ul>
+                필수는 아니지만 다음 사항을 포함하면 유용합니다.
+                <ul>
+                    <li>사용자가 자산의 상장을 개시했고 트랜잭션이 완료되지 않았을 때 처리 표시 장치</li>
+                    <li>자산이 성공적으로 상장되었을 때 피드백</li>
+                </ul>    
+            </td>
+        </tr>
+</table>
+
+### 자산 구매하기
+
+<table>
+    <tr>
+            <th>플로우</th>
+            <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+            <th>요구 사항</th>
+        </tr>
+        <tr>
+            <td>자산 화면</td>
+            <td>
+                <a href="/img/wallet-sdk-ui-guide/buy.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/buy.png" alt="자산 매수 화면" width="85%" height="85%" /></a>
+            </td>
+            <td>
+                <ul>
+                    <li>매수 가격 표시</li>
+                    <li>매수 통화 표시</li>
+                    <li>적용되는 메이커 및 테이커 수수료 세부 내역 제공</li>
+                </ul>
+                필수는 아니지만 다음 사항을 포함하면 유용합니다.
+                <ul>
+                    <li>매수가 성공적이었다는 사용자 피드백</li>
+                    <li>자금이 불충분한 경우 사용자를 '자금 추가하기' 플로우로 전달</li>
+                </ul>    
+            </td>
+        </tr>
+</table>
+
+### L1에서 L2로 입금하기
+
+<table>
+    <tr>
+            <th>플로우</th>
+            <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+            <th>요구 사항</th>
+        </tr>
+        <tr>
+            <td>자금 추가 플로우</td>
+            <td>
+                <a href="/img/wallet-sdk-ui-guide/add-funds.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/add-funds.png" alt="자금 추가" width="65%" height="65%" /></a>
+            </td>
+            <td>
+                <ul>
+                    <li>'자금 추가하기' 플로우 제공</li>
+                </ul>
+            </td>
+        </tr>
+        <tr>
+            <td>입금 플로우</td>
+            <td>
+                <a href="/img/wallet-sdk-ui-guide/deposit.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/deposit.png" alt="입금 화면" width="65%" height="65%" /></a>
+            </td>
+            <td>
+                <ul>
+                    <li>사용자에게 통화 유형 입력 필드 제공</li>
+                    <li>사용자에게 입금하고자 하는 금액을 입력할 필드 제공</li>
+                </ul>
+                필수는 아니지만 다음 사항을 포함하면 유용합니다.
+                <ul>
+                    <li>다양한 통화 유형을 나타내는 아이콘</li>
+                    <li>입금에 사용할 수 있는 L1 잔고</li>
+                    <li> 입금이 성공적인 경우 피드백</li>
+                </ul>    
+            </td>
+        </tr>
+</table>
+
+### L2에서 L1으로 인출하기
+
+<table>
+    <tr>
+        <th>플로우</th>
+        <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+        <th>요구 사항</th>
+    </tr>
+    <tr>
+        <td>인출 플로우</td>
+        <td>
+            <a href="/img/wallet-sdk-ui-guide/withdrawal-1.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/withdraw-1.png" alt="Withdraw Screen" width="65%" height="65%" /></a><br/>
+            <a href="/img/wallet-sdk-ui-guide/withdrawal-2.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/withdraw-2.png" alt="인출 확인" width="65%" height="65%" /></a>
+        </td>
+        <td>
+            <strong>파트너 의무 이행 사항</strong>
+            <ul>
+                <li>인출 플로우를 표시</li>
+                <li>통화 유형 수집(다양한 통화의 인출 가정)</li>
+                <li>인출할 금액을 수집</li>
+            </ul>
+            보유 시 유용한 사항:
+            <ul>
+                <li>다양한 통화 유형의 아이콘</li>
+                <li>입금에 사용할 수 있는 L2 잔고</li>
+                <li>인출에 L1 가스비 지불이 요구된다는 알림</li>
+                <li>인출이 인출 준비 및 인출 실행의 2단계로 이루어진다는 알림(더 자세한 정보는 <a href="https://support.immutable.com/hc/en-us/articles/1500003550482">여기</a>를 참조)</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+### 명목 화폐 환전
+
+:::참고
+
+_명목 화폐 환전_은 아직 개발 중이며 SDK에서 아직 사용할 수 없습니다.
+
+:::
+
+<table>
+    <tr>
+        <th>플로우</th>
+        <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+        <th>요구 사항</th>
+    </tr>
+    <tr>
+        <td>명목 화폐 환전</td>
+        <td>
+            <a href="/img/wallet-sdk-ui-guide/fiat-onramp.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/fiat-onramp.png" alt="자금 추가" width="65%" height="65%" /></a>
+        </td>
+        <td>
+            <ul>
+                <li>환전 플로우 트리거(Moonpay 위젯이 나머지 처리)</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+### 암호 화폐에서 명목 화폐로 환전
+
+:::참고
+
+_암호 화폐에서 명목 화폐로 환전_은 아직 개발 중이며 SDK에서 아직 사용할 수 없습니다.
+
+:::
+
+
+<table>
+    <tr>
+        <th>플로우</th>
+        <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+        <th>요구 사항</th>
+    </tr>
+    <tr>
+        <td>암호 화폐 환전</td>
+        <td>
+            <a href="/img/wallet-sdk-ui-guide/fiat-offramp.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/fiat-offramp.png" alt="은행 계좌로 인출" width="65%" height="65%" /></a>
+        </td>
+        <td>
+            <ul>
+                <li>환전 플로우 트리거(Moonpay 위젯이 나머지 처리)</li>
+            </ul>
+            필수는 아니나 다음을 갖는 것이 유용합니다.
+            <ul>
+                <li>Moonpay 환전은 US, UK, EU 사용자에게만 가능하다는 사용자 알림</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+### 오류 상태
+
+<table>
+    <tr>
+        <th>플로우</th>
+        <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+        <th>요구 사항</th>
+    </tr>
+    <tr>
+        <td>오류 상태</td>
+        <td>
+            <a href="/img/wallet-sdk-ui-guide/errors.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/errors.png" alt="오류 화면" width="65%" height="65%" /></a>
+        </td>
+        <td>
+            <ul>
+                <li>특정 오류에 관한 사용자 피드백 제공(오류의 전체 목록은 <a href="https://docs.x.immutable.com/docs/link-errors/">여기</a>에서 찾을 수 있습니다)</li>
+            </ul>
+            필수는 아니지만 다음 사항을 포함하면 유용합니다.
+            <ul>
+                <li>이뮤터블 지원 페이지로 연결되는 링크</li>
+            </ul>
+        </td>
+    </tr>
+</table>
+
+### 트랜잭션 히스토리
+
+:::참고
+
+_트랜잭션 히스토리_는 아직 개발 중이며 SDK에서 아직 사용할 수 없습니다.
+
+:::
+
+
+<table>
+    <tr>
+        <th>플로우</th>
+        <th>링크 UI/이뮤터블 마켓플레이스 예시</th>
+        <th>요구 사항</th>
+    </tr>
+    <tr>
+        <td>트랜잭션 히스토리</td>
+        <td>
+            <a href="/img/wallet-sdk-ui-guide/transaction-history.png" target="_blank"><img src="/img/wallet-sdk-ui-guide/transaction-history.png" alt="트랜잭션 히스토리 화면" width="65%" height="65%" /></a>
+        </td>
+        <td>
+            <ul>
+                <li>사용자에게 자신의 트랜잭션 히스토리를 볼 수 있는 능력 부여</li>
+                <li>각 트랜잭션에 대해 트랙잭션 ID, 자산 세부 내역, 트랙잭션의 유명 및 관련 비용에 관한 정보 제공</li>
+            </ul>
+        </td>
+    </tr>
+</table>
