@@ -275,7 +275,7 @@ Next we will need to install packages needed for deploying our smart contract.
 
 ![Open the integrated terminal](/img/zero-to-hero/Integrated-Terminal.png 'Open the integrated terminal')
 
-3. Run `npm install --include=dev` and wait until the installation is completed
+3. Run `npm install --include=sandbox` and wait until the installation is completed
 4. Save your work
 
 ## Step 9: Deploy Contract
