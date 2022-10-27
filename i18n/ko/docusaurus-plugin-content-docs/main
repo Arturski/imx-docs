@@ -1,188 +1,96 @@
 ---
-id: "personal-inventory"
-title: 'Personal inventory'
-slug: '/personal-inventory'
-excerpt: '계정 잔고 보기 및 자산 관리'
-sidebar_position: 3
+id: "marketplaces"
+title: 'Marketplaces'
+slug: '/marketplaces'
+excerpt: '오더 매수 및 매도 관리'
+sidebar_position: 4
 keywords:
-  - imx-wallets
+  - imx-traders
 ---
 
-사용자의 계정을 모니터링하고 상호작용하려면 IMX 클라이언트와 링크 SDK가 모두 필요합니다. 인벤토리 요청에 타입 상수의 추가적인 임포트가 필요할 수도 있습니다.
+As an exchange platform, ImmutableX provides all the features needed to create a marketplace for the assets created and stored on the platform. 사용자 계정에서 상장이 생성되면, 현재 모든 오더를 보여주기 위해 별도의 마켓플레이스 섹션을 두는 일은 흔한 일입니다.
 
-```javascript title="Constants required for inventory requests"
-import { ERC721TokenType, ETHTokenType } from '@imtbl/imx-sdk'
-```
+## 오더
 
-## ERC20 및 IMX 잔고
+Orders on ImmutableX all include a buy and sell side. To fill or partially fill an order, an order with the opposite buy and sell tokens is created and sent to ImmutableX. It is important to note there are different _statuses_ an ImmutableX order can have:
 
-ImmutableX’s base token is Ethereum. 일단 플랫폼에 입금되면 토큰은 세 가지 상태로 존재합니다.
+- **Active** - 오더가 유효하며 작성 또는 일부 작성될 수 있습니다.
+- **Filled** - 오더가 완료되어 자산(들)이 전송되었습니다.
+- **Cancelled** - 오더가 취소되어 더 이상 작성할 수 없습니다.
+- **Inactive** - 오더가 거부되어 시스템이 원래 트랜잭션의 수정 트랜잭션 수령을 기다리는 동안 그 상태로 있습니다. 어느 한쪽이 거래 가능한 토큰을 더 이상 가지고 있지 않을 때 발생합니다.
 
-- **imx** - ETH deposited on ImmutableX and is ready to be used to fill orders, trade, etc.
-- **Preparing withdrawal** - ETH that has started the withdrawal process from ImmutableX. It must wait until the next published signature to the main chain before moving to the withdrawable state.
-- **인출 가능(Withdrawable)** - 현재 메인 체인의 다른 주소로 인출 가능한 ETH.
+## 오더 나열하기
 
-To retrieve a user’s balances, use the following IMX client function:
+오더를 보여주는 것은 자산과 마찬가지로 IMX 클라이언트에서 가장 잘 액세스할 수 있습니다. 보통 오더에 대해 요청을 할 때는 상태에 대해 필터링합니다. The following call will retrieve all the active orders for assets from the Gods Unchained collection (paged):
 
 ```javascript
-// The address is the value returned by the link.setup({}) call i.e
-// const { address, starkPublicKey } = await link.setup({});
-const listBalancesResponse = await client.listBalances({ user: address })
-const balances = listBalancesResponse.result[0];
+// Gods Unchained collection adresss
+const collectionAddress = '0xacb3c6a43d15b907e8433077b6d38ae40936fe2c'
+const ordersRequest = await client.getOrders({
+  status: 'active',
+  sell_token_address: collectionAddress
+})
 ```
 
-The _balances_ object will contain the amounts of all three states: balance(representing your balance on the imx protocol), preparing_withdrawal, and withdrawable. 각각의 값은 ETH 금액을 표시하는 데 필요한 소수점 자릿수의 유지를 위해 사용되는 구조인 BigNumber로 반환됩니다. 그 값은 Wei로 표시되기 때문에 ETH로 표시하려면 변환이 필요할 수 있습니다. 1ETH = 10^18Wei.
-
-:::info ETHER - WEI 환산
-1 Ether = 1,000,000,000,000,000,000 Wei
+:::info 오더 측면
+오더에는 매수 및 매도 측면이 있습니다. 분류 및 필터링 시 각 측면이 고유한 필터링 매개 변수를 갖는다는 점을 기억하십시오.
 :::
 
-이더 패키지를 사용하는 경우, 다음의 유틸리티 호출을 통해 WEI 값을 ETH로 지정할 수 있습니다.
+## 오더 정렬
 
-```javascript title="Wei to ETH"
-import { ethers } from 'ethers'
-
-// ...
-
-const amountInWei = listBalancesResponse.result[0].balance;
-const amountInEth = ethers.utils.formatEther(amountInWei)
-```
-
-## 입금
-
-In order to deposit into ImmutableX, a user sends ETH from their wallet to the ImmutableX contract. 이 ETH는 현재 이뮤터블이 만든 레이어 2(L2) 솔루션에 있으며 이후 사용자가 인출할 때까지 컨트랙트 내에 머무릅니다. 링크 SDK 호출은 입금 과정에 손쉬운 인터페이스를 제공합니다.
+검색된 오더는 특정한 순서대로 표시되어야 할 것입니다. 토큰명, 가격, 생성 날짜 중 하나의 순서로 말입니다. 오더 요청에 정렬과 방향을 추가하는 것은 간단합니다.
 
 ```javascript
-// Deposit ETH into IMX
-link.deposit({
-  type: ETHTokenType.ETH,
-  amount: '0.01',
+//Sort by price, lowest to highest
+const ordersRequest = await client.getOrders({
+  status: 'active',
+  sell_token_address: collectionAddress,
+  order_by: 'buy_quantity',
+  direction: 'asc',
 })
 ```
 
-## 인출
+## 오더 필터링
 
-Withdrawing ETH from ImmutableX is a two step process. As noted before, the ETH on the mainchain technically resides in the ImmutableX contract.
-
-A signed transaction needs to be sent on the L2 (ImmutableX), preparing the ETH to be withdrawn from the contract. 인출을 준비하려면 다음의 링크 SDK 기능을 사용하십시오.
+오더는 다양한 속성으로 필터링할 수 있습니다. 하지만 가장 일반적으로 사용되는 방식은 자산명 및 자산 메타데이터로 필터링하는 것입니다. 다음은 검색 바 컴포넌트가 자주 사용하는 오더에 대한 자산명 필터링을 보여줍니다.
 
 ```javascript
-link.prepareWithdrawal({
-  type: ETHTokenType.ETH,
-  amount: '0.01', //The amount of the token to withdraw
+const ordersRequest = await client.getOrders({
+  status: 'active',
+  sell_token_address: collectionAddress,
+  sell_token_name: tokenName,
 })
 ```
 
-:::caution Avoiding gas price complaints
-Withdrawing from ImmutableX will cost the user a gas fee, so encouraging users to wait and group their withdrawals with larger amounts is recommended to avoid gas price complaints.
-:::
+메타데이터로 필터링하는 것은 훨씬 복잡합니다. 메타데이터 필터링은 속성 필터링을 포함한 객체를 정의하는 JSON 문자열을 허용합니다. 각 필터링 속성은 필터링하고자 하는 속성의 값을 포함하는 배열입니다. 각 속성의 이름은 정확히 일치해야 합니다.
 
-인출의 준비와 메인 체인(L1) 계정으로의 인출 완료 사이에는 소요되는 시간이 존재합니다. 인출 과정을 모니터링하는 간단한 방법은 사용자의 다양한 계정 잔고를 [잔고](#erc20imx-balances)에서 보이는 것처럼 모니터링하는 것입니다.
-
-ETH가 _인출 가능한_ 상태로 넘어가면 사용자는 메인 체인 트랜잭션을 생성하여 ETH를 자신의 지갑으로 인출할 수 있습니다. 해당 트랜잭션은 메인 체인으로 퍼블리싱되고 있기 때문에 이 절차에는 가스비가 요구됩니다. 인출을 완료하기 위해서는 다음의 링크 SDK 기능을 사용해 사용자에게 절차를 안내하십시오.
+다음의 예시에서는 쉐도우 또는 골드 품질의 부스트 워커 카드(proto 55)에 대한 갓즈 언체인드 카드 오더를 필터링하는 법을 보여줍니다.
 
 ```javascript
-link.completeWithdrawal({
-  type: ETHTokenType.ETH,
+const ordersRequest = await client.getOrders({
+  status: 'active',
+  sell_token_address: collectionAddress,
+  sell_metadata: '{"proto":["55"],"quality":["Shadow","Gold"]}',
 })
 ```
 
-## 트랜잭션 히스토리
+**참고:** API로의 호출의 경우, 메타데이터 필터링은 다음과 같이 인코딩되어야 합니다.
 
-링크 SDK는 사용자의 히스토리를 보여주는 아주 간단한 방법을 제공합니다. 다음의 호출을 사용해 사용자의 히스토리를 팝업창에 표시하십시오.
-
-```javascript
-// View transaction history
-link.history({})
+```bash
+GET https://api.x.immutable.com/v1/assets?collection='0xacb3c6a43d15b907e8433077b6d38ae40936fe2c'&metadata=%7B%22proto%22%3A%5B%2255%22%5D%2C%22quality%22%3A%5B%22Shadow%22%2C%22Gold%22%5D%7D
 ```
 
-## 사용자 NFT 자산
+:::info 메타데이터 참고 사항
+자산 메타데이터가 어떻게 구성되는냐에 따라 이름도 포함될 수 있습니다. 하지만 디폴트로 각 자산은 메타데이터 외부에 이름 속성을 가지고 있으며 그것이 필터링에 더 안전한 선택입니다. 이름과 메타데이터 필터링을 모두 함께 결합하는 것도 효과적입니다.
 
-Displaying user assets is a common requirement for games and marketplaces using ImmutableX. The IMX Client provides a quick way to get all the user’s assets: [block:code]
+## 번호 매기기
 
-```javascript
-const assetsRequest = await client.getAssets({ user: address })
-```
+오더 요청 또한 자산과 마찬가지로 커서를 반환합니다. 커서를 사용한 번호 매기기 사례로 [사용자 NFT 자산](./personal-inventory.md#user-nft-assets)에서 자산 커서 예시를 살펴보십시오.
 
-This request will retrieve all the user’s assets tracked by ImmutableX limited only by the result set page size. If a user has more assets than the current request’s page size limit (currently 100), additional requests can be made with the cursor property to navigate through all the user’s assets.
+## 오더 작성하기
 
-```javascript
-let assetCursor
-let assets = []
-do {
-  let assetRequest = await client.getAssets({ user: address, cursor: assetCursor })
-  assets = assets.concat(assetRequest.result)
-  assetCursor = assetRequest.cursor
-} while (assetCursor)
-```
-
-이 기술은 모든 사용자의 자산을 한 번에 가져올 수 있게 해줍니다. 하지만 사용자가 보유한 자산 수량에 따라 느릴 수 있습니다. 성능을 극대화하기 위해 페이징이나 무제한 스크롤링 기법을 사용해 다른 결과를 동적으로 로딩하는 것이 가장 좋습니다.
-
-## 소유 자산 필터링
-
-대부분의 애플리케이션은 어떤 방식으로든 사용자의 자산을 필터링하고 싶어합니다. Oftentimes only one collection’s assets are needed, or maybe only the assets on ImmutableX (L2) are required to be shown. 자산 요청을 필터링하여 반환되는 데이터를 최소화하는 데는 많은 방법이 있습니다. 다음은 컬렉션과 레이어 2 자산만을 필터링하는 예시입니다.
+기존 오더를 작성하려면, 서명 절차를 통해 사용자를 안내할 수 있도록 링크 SDK를 사용하십시오. 오더 ID를 사용해 매수를 호출하십시오.
 
 ```javascript
-let assetsRequest = await client.getAssets({
-  user: address,
-  cursor: assetCursor,
-  status: 'imx',
-  collection: collectionAddress,
-})
-```
-
-사용자의 자산을 표시할 때 어떤 자산이 이미 상장되었는지를 보여줄 필요가 있을 때가 있습니다. 매도 오더를 자산과 함께 반환하려면, 요청에 _sell_orders_ 플래그를 설정하십시오. 각각의 자산에는 해당 자산에 대한 모든 오더를 명시적으로 포함하는 오더 객체가 포함되어 있습니다. 아래의 예시에서는 어떻게 _isListed_ 속성을 검색된 자산에 추가하는지를 보여줍니다.
-
-```javascript
-let assetCursor
-let assets = []
-do {
-  let assetRequest = await client.getAssets({
-    user: address,
-    cursor: assetCursor,
-    status: 'imx',
-    collection: collectionAddress,
-    sell_orders: true,
-  })
-  assets = assets.concat(assetRequest.result)
-  assetCursor = assetRequest.cursor
-} while (assetCursor)
-
-for (let asset of assets) {
-  asset.isListed = false
-  if (asset.orders?.sell_orders?.length > 0) {
-    asset.isListed = true
-  }
-}
-```
-
-## 매도 오더 생성
-
-사용자의 자산을 확보했다면, 링크 SDK를 사용해 사용자에게 자산의 판매를 안내하십시오.
-
-```javascript
-async function sellAsset(asset, priceInEth) {
-  let sellParams = {
-    amount: priceInEth,
-    tokenId: asset.id,
-    tokenAddress: asset.token_address,
-  }
-  //Throws an error if not successful
-  await link.sell(sellParams)
-}
-```
-
-## 자산 전송
-
-링크 SDK를 통해 일반적으로 사용되는 또 다른 사례인 사용자 전송을 이용할 수 있습니다. If a user wants to send a token to another ImmutableX address, an order is not required. 대신 다음의 코드를 사용하십시오.
-
-```javascript
-async function transferERC721(asset) {
-  await link.transfer({
-    type: ERC721TokenType.ERC721,
-    tokenId: asset.id,
-    tokenAddress: asset.token_address,
-    to: addressToSendTo,
-  })
-}
+await link.buy({ orderIds: [order.order_id] })
 ```
